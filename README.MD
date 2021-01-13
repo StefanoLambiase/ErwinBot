@@ -1,5 +1,9 @@
 # Erwin bot
 
+<img 
+  src="https://images.everyeye.it/img-notizie/l-attacco-giganti-vediamo-nuova-action-figure-dedicata-erwin-smith-v3-392534-1280x720.jpg" 
+  alt="Oh my... It's Erwin!">
+
 This bot has been created using [Bot Framework](https://dev.botframework.com).
 
 ## Prerequisites
