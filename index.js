@@ -12,7 +12,7 @@ const restify = require('restify');
 const { BotFrameworkAdapter } = require('botbuilder');
 
 // This bot's main dialog.
-const { ErwinBot } = require('./bot/erwinBot');
+const { ErwinBot } = require('./bots/erwinBot');
 
 // Create HTTP server
 const server = restify.createServer();
