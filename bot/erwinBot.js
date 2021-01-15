@@ -1,5 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// This class implements the mains bot's callback
 
 const { ActivityHandler, MessageFactory } = require('botbuilder');
 
