@@ -1,11 +1,13 @@
 // This class implements the mains bot's callback
 
 const { ActivityHandler, MessageFactory } = require('botbuilder');
+const { LuisRecognizer } = require('botbuilder-ai');
+
 // Imports for Slack
 const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
 
 class ErwinBot extends ActivityHandler {
-    constructor() {
+    constructor(luisRecognizer) {
         super();
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
@@ -42,6 +44,11 @@ class ErwinBot extends ActivityHandler {
         this.onMessage(async (context, next) => {
             // Messages construction part
             const replyText = `Echo: ${ context.activity.text }`;
+
+            const luisResult = await luisRecognizer.executeLuisQuery(context);
+            if( LuisRecognizer.topIntent(luisResult) === 'Ticketing' ){
+                await context.sendActivity(MessageFactory.text("ticketing", "ticketing"));
+            }
 
             // Send messages part
             await context.sendActivity(MessageFactory.text(replyText, replyText));

@@ -14,6 +14,10 @@ const { BotFrameworkAdapter } = require('botbuilder');
 // This bot's main dialog.
 const { ErwinBot } = require('./bots/erwinBot');
 
+
+//LUIS recognizer for language interpretation
+const { ErwinRecognizer } = require('./CognitiveModels/ErwinRecognizer');
+
 // Create HTTP server
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -54,8 +58,20 @@ const onTurnErrorHandler = async (context, error) => {
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 
+const {
+    LuisAppId,
+    LuisAPIKey,
+    LuisAPIHostName
+} = process.env;
+const luisConfig = {
+    applicationId: LuisAppId,
+    endpointKey: LuisAPIKey,
+    endpoint: `https://${ LuisAPIHostName }`
+};
+const luisRecognizer = new ErwinRecognizer(luisConfig);
+
 // Create the main dialog.
-const myBot = new ErwinBot();
+const myBot = new ErwinBot(luisRecognizer);
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
