@@ -1,6 +1,5 @@
 // Import required types from libraries
 const {
-    ActionTypes,
     ActivityTypes,
     MessageFactory,
     InputHints
@@ -20,7 +19,6 @@ const {
 
 // Imports for Slack
 const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
-
 
 // Dialogs names
 const MAIN_DIALOG = 'MAIN_DIALOG';
@@ -69,16 +67,16 @@ class MainDialog extends ComponentDialog {
 
     /**
      * Implement the first bot message.
-     * @param {*} step 
+     * @param {*} step
      */
     async firstStep(step) {
         if (!this.luisRecognizer.isConfigured) {
-            let errorText = 'WARNING: There are problems in the Luis configuration';
+            const errorText = 'WARNING: There are problems in the Luis configuration';
             await step.context.sendActivity(errorText, null, InputHints.IgnoringInput);
             return await step.next();
         }
 
-        let messageText = step.options.restartMsg ? step.options.restartMsg : 'Write something to start';
+        const messageText = step.options.restartMsg ? step.options.restartMsg : 'Write something to start';
         const welcomeMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
 
         return await step.prompt(TEXT_PROMPT, {
@@ -88,7 +86,7 @@ class MainDialog extends ComponentDialog {
 
     /**
      * Implement the step selection on LuisRecognizer intent.
-     * @param {*} step 
+     * @param {*} step
      */
     async optionsStep(step) {
         // Set the activity.
@@ -107,7 +105,7 @@ class MainDialog extends ComponentDialog {
                 { channelData: SampleFidelityMessage }
             ]);
         } else if (LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
-            await step.context.sendActivity(MessageFactory.text("ticketing", "ticketing"));
+            await step.context.sendActivity(MessageFactory.text('ticketing', 'ticketing'));
             // return await step.beginDialog(TICKET_DIALOG);
         } else {
             // The user did not enter input that this bot was built to handle.
@@ -121,7 +119,6 @@ class MainDialog extends ComponentDialog {
     async loopStep(step) {
         return await step.replaceDialog(this.id);
     }
-
 }
 
 module.exports.MainDialog = MainDialog;
