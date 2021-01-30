@@ -1,14 +1,22 @@
 // This class implements the mains bot's callback
 
-const { ActivityHandler, MessageFactory } = require('botbuilder');
-const { LuisRecognizer } = require('botbuilder-ai');
+const { ActivityHandler } = require('botbuilder');
 
 // Imports for Slack
 const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
 
 class ErwinBot extends ActivityHandler {
-    constructor(luisRecognizer) {
+    constructor(conversationState, userState, dialog) {
         super();
+
+        if (!conversationState) throw new Error('[DialogBot]: Missing parameter. conversationState is required');
+        if (!userState) throw new Error('[DialogBot]: Missing parameter. userState is required');
+        if (!dialog) throw new Error('[DialogBot]: Missing parameter. dialog is required');
+
+        this.conversationState = conversationState;
+        this.userState = userState;
+        this.dialog = dialog;
+        this.dialogState = this.conversationState.createProperty('DialogState');
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
 
@@ -39,23 +47,24 @@ class ErwinBot extends ActivityHandler {
         });
 
         /**
-         * Implement the bot's response to a chat member's message
+         * Implement the bot's response to a chat member's message.
          */
         this.onMessage(async (context, next) => {
-            // Messages construction part
-            const replyText = `Echo: ${ context.activity.text }`;
-
-            const luisResult = await luisRecognizer.executeLuisQuery(context);
-            if( LuisRecognizer.topIntent(luisResult) === 'Ticketing' ){
-                await context.sendActivity(MessageFactory.text("ticketing", "ticketing"));
-            }
-
-            // Send messages part
-            await context.sendActivity(MessageFactory.text(replyText, replyText));
-            await context.sendActivity({ channelData: SampleFidelityMessage });
+            await this.dialog.run(context, this.dialogState);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
+    }
+
+    /**
+     * Override the ActivityHandler.run() method to save state changes after the bot logic completes.
+     */
+    async run(context) {
+        await super.run(context);
+
+        // Save any state changes. The load happened during the execution of the Dialog.
+        await this.conversationState.saveChanges(context, false);
+        await this.userState.saveChanges(context, false);
     }
 }
 

@@ -1,5 +1,5 @@
+// Read environment variables from .env file.
 const path = require('path');
-
 const dotenv = require('dotenv');
 // Import required bot configuration.
 const ENV_FILE = path.join(__dirname, '.env');
@@ -8,14 +8,20 @@ dotenv.config({ path: ENV_FILE });
 const restify = require('restify');
 
 // Import required bot services.
-// See https://aka.ms/bot-services to learn more about the different parts of a bot.
-const { BotFrameworkAdapter } = require('botbuilder');
+const {
+    BotFrameworkAdapter,
+    ConversationState,
+    MemoryStorage,
+    UserState
+} = require('botbuilder');
 
-// This bot's main dialog.
+// Import main bot.
 const { ErwinBot } = require('./bots/erwinBot');
 
+// Import main dialog.
+const { MainDialog } = require('./dialogs/mainDialog');
 
-//LUIS recognizer for language interpretation
+// Import LUIS recognizer for language interpretation
 const { ErwinRecognizer } = require('./CognitiveModels/ErwinRecognizer');
 
 // Create HTTP server
@@ -58,6 +64,12 @@ const onTurnErrorHandler = async (context, error) => {
 // Set the onTurnError for the singleton BotFrameworkAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 
+// Create conversation and user state with in-memory storage provider
+const memoryStorage = new MemoryStorage();
+const conversationState = new ConversationState(memoryStorage);
+const userState = new UserState(memoryStorage);
+
+// LUIS recognizer part.
 const {
     LuisAppId,
     LuisAPIKey,
@@ -71,13 +83,16 @@ const luisConfig = {
 const luisRecognizer = new ErwinRecognizer(luisConfig);
 
 // Create the main dialog.
-const myBot = new ErwinBot(luisRecognizer);
+const dialog = new MainDialog(luisRecognizer, userState);
+
+// Create the bot
+const erwinBot = new ErwinBot(conversationState, userState, dialog);
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
-        await myBot.run(context);
+        await erwinBot.run(context);
     });
 });
 
@@ -94,6 +109,6 @@ server.on('upgrade', (req, socket, head) => {
     streamingAdapter.useWebSocket(req, socket, head, async (context) => {
         // After connecting via WebSocket, run this logic for every request sent over
         // the WebSocket connection.
-        await myBot.run(context);
+        await erwinBot.run(context);
     });
 });
