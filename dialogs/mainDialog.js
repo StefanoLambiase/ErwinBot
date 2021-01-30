@@ -44,7 +44,7 @@ class MainDialog extends ComponentDialog {
         // ! if you want to add a new dialog in the steps, first add it here.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-            this.startStep.bind(this),
+            this.firstStep.bind(this),
             this.optionsStep.bind(this),
             this.loopStep.bind(this)
         ]));
@@ -71,9 +71,9 @@ class MainDialog extends ComponentDialog {
      * Implement the first bot message.
      * @param {*} step 
      */
-    async startStep(step) {
+    async firstStep(step) {
         if (!this.luisRecognizer.isConfigured) {
-            let errorText = 'ATTENZIONE: LUIS non configurato. Controlla il file .env!';
+            let errorText = 'WARNING: There are problems in the Luis configuration';
             await step.context.sendActivity(errorText, null, InputHints.IgnoringInput);
             return await step.next();
         }
