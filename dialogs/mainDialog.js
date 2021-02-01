@@ -104,7 +104,7 @@ class MainDialog extends ComponentDialog {
                 { type: 'message', text: 'Slack Message' },
                 { channelData: SampleFidelityMessage }
             ]);
-        } else if (LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
+        } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             await step.context.sendActivity(MessageFactory.text('ticketing', 'ticketing'));
             // return await step.beginDialog(TICKET_DIALOG);
         } else {
