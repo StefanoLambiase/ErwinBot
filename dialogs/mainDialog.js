@@ -1,14 +1,6 @@
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
-const { WebClient, LogLevel } = require("@slack/web-api");
-
-// WebClient insantiates a client that can call API methods
-// When using Bolt, you can use either `app.client` or the `client` passed to listeners.
-const client = new WebClient({
-    token: 'xapp-1-A01JSLE0LA1-1703827803763-b55cf4e22d34058ebe6e6d9bea57dfab71ddc57512f87acc696a477d4b45f2f5',
-    // LogLevel can be imported and used to make debugging simpler
-    logLevel: LogLevel.DEBUG
-});
+const { WebClient, LogLevel } = require('@slack/web-api');
 
 // Import required types from libraries
 const {
@@ -117,10 +109,18 @@ class MainDialog extends ComponentDialog {
                 { channelData: SampleFidelityMessage }
             ]);
 
+            // WebClient insantiates a client that can call API methods
+            // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
+            const client = new WebClient({
+                token: 'xapp-1-A01JSLE0LA1-1703827803763-b55cf4e22d34058ebe6e6d9bea57dfab71ddc57512f87acc696a477d4b45f2f5',
+                // LogLevel can be imported and used to make debugging simpler
+                logLevel: LogLevel.DEBUG
+            });
+
             // Unix timestamp for tomorrow morning at 9AM
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate());
-            tomorrow.setHours(15, 55, 0);
+            tomorrow.setHours(16, 0, 0);
 
             const channelId = 'C01JSL8L7L5';
 
