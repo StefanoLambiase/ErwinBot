@@ -112,7 +112,7 @@ class MainDialog extends ComponentDialog {
             // WebClient insantiates a client that can call API methods
             // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
             const client = new WebClient({
-                token: 'xapp-1-A01JSLE0LA1-1703827803763-b55cf4e22d34058ebe6e6d9bea57dfab71ddc57512f87acc696a477d4b45f2f5',
+                token: 'xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI',
                 // LogLevel can be imported and used to make debugging simpler
                 logLevel: LogLevel.DEBUG
             });
