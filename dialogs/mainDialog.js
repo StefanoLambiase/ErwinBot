@@ -115,12 +115,12 @@ class MainDialog extends ComponentDialog {
                 { type: 'message', text: 'Slack Message' },
                 { channelData: SampleFidelityMessage },
                 {
-                    channelData: {
+                    channelData: [{
                         channel: channelId,
                         text: 'Looking towards the future',
                         // Time to post message, in Unix Epoch timestamp format
-                        post_at: tomorrow.getTime() / 1000
-                    }
+                        post_at: 1612281608
+                    }]
                 }
             ]);
 
