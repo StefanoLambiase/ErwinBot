@@ -102,11 +102,26 @@ class MainDialog extends ComponentDialog {
         // Luis result from LuisRecognizer.
         const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
 
+        // Unix timestamp for tomorrow morning at 9AM
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate());
+        tomorrow.setHours(16, 43, 0);
+
+        const channelId = 'C01LQ3DG8DR';
+
         // Part to select the dialogs.
         if (specifiedOption === 'slack') {
             await step.context.sendActivities([
                 { type: 'message', text: 'Slack Message' },
-                { channelData: SampleFidelityMessage }
+                { channelData: SampleFidelityMessage },
+                {
+                    channelData: {
+                        channel: channelId,
+                        text: 'Looking towards the future',
+                        // Time to post message, in Unix Epoch timestamp format
+                        post_at: tomorrow.getTime() / 1000
+                    }
+                }
             ]);
 
             console.log('Skaten');
@@ -120,13 +135,6 @@ class MainDialog extends ComponentDialog {
             });
 
             console.log('Skaten2');
-
-            // Unix timestamp for tomorrow morning at 9AM
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate());
-            tomorrow.setHours(16, 35, 0);
-
-            const channelId = 'C01LQ3DG8DR';
 
             console.log('Skaten3');
 
