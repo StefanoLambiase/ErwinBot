@@ -120,7 +120,7 @@ class MainDialog extends ComponentDialog {
             // Unix timestamp for tomorrow morning at 9AM
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate());
-            tomorrow.setHours(16, 0, 0);
+            tomorrow.setHours(16, 10, 0);
 
             const channelId = 'C01JSL8L7L5';
 
