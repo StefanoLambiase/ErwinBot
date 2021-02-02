@@ -109,6 +109,8 @@ class MainDialog extends ComponentDialog {
                 { channelData: SampleFidelityMessage }
             ]);
 
+            console.log('Skaten');
+
             // WebClient insantiates a client that can call API methods
             // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
             const client = new WebClient({
@@ -117,12 +119,16 @@ class MainDialog extends ComponentDialog {
                 logLevel: LogLevel.DEBUG
             });
 
+            console.log('Skaten2');
+
             // Unix timestamp for tomorrow morning at 9AM
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate());
-            tomorrow.setHours(16, 10, 0);
+            tomorrow.setHours(16, 17, 0);
 
             const channelId = 'C01JSL8L7L5';
+
+            console.log('Skaten3');
 
             try {
                 // Call the chat.scheduleMessage method using the WebClient
@@ -132,6 +138,7 @@ class MainDialog extends ComponentDialog {
                     // Time to post message, in Unix Epoch timestamp format
                     post_at: tomorrow.getTime() / 1000
                 });
+
                 console.log(result);
             } catch (error) {
                 console.error(error);
