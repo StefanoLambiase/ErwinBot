@@ -32,7 +32,11 @@ class TicketDialog extends ComponentDialog {
         // Add used dialogs.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-            this.firstStep.bind(this)
+            this.firstStep.bind(this),
+            this.definitionStep.bind(this),
+            this.causeStep.bind(this),
+            this.possibilitiesStep.bind(this),
+            this.solutionStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -53,13 +57,35 @@ class TicketDialog extends ComponentDialog {
         }
     }
 
-    async firstStep(step) {
-        const messageText = step.options.restartMsg ? step.options.restartMsg : 'I am the ticket dialog';
-        const welcomeMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
-
-        return await step.prompt(TEXT_PROMPT, {
-            prompt: welcomeMessage
+    async firstStep(stepContext) {
+        await stepContext.context.sendActivities([
+            { type: 'message', text: 'I, the Bot-mander, am here to help you!!!' },
+            { type: 'message', text: 'Before contact your manager, we need to collect some information!' },
+            { type: 'message', text: 'This is important to assure that the problem is well define and to facilitate the solution find' }
+        ]);
+        return await stepContext.prompt(TEXT_PROMPT, {
+            prompt: 'Let\'start with your name! Type it.'
         });
+    }
+
+    async definitionStep(stepContext) {
+
+        const message = 'What is the problem?';
+    }
+
+    async causeStep(stepContext) {
+
+        const message = 'What is the cause of the problem?';
+    }
+
+    async possibilitiesStep(stepContext) {
+
+        const message = 'What are all possible solutions of the problem?';
+    }
+
+    async solutionStep(stepContext) {
+
+        const message = 'What solution do you suggest?';
     }
 }
 
