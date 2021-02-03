@@ -1,12 +1,7 @@
 // Import required types from libraries
 const {
-    ActivityTypes,
-    MessageFactory,
-    InputHints
-} = require('botbuilder');
-
-const {
     TextPrompt,
+    ChoicePrompt,
     ComponentDialog,
     DialogSet,
     DialogTurnStatus,
@@ -27,6 +22,7 @@ const { PossibilitiesDialog, POSSIBILITIES_DIALOG } = require('./possiblitiesDia
 const TICKET_DIALOG = 'TICKET_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
+const CHOICE_PROMPT = 'CHOICE_PROMPT';
 
 /**
  * Implements the functionality used to open a problem ticket.
@@ -41,6 +37,7 @@ class TicketDialog extends ComponentDialog {
 
         // Add used dialogs.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+        this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
         this.addDialog(new PossibilitiesDialog(luisRecognizer));
 
@@ -123,7 +120,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async possibilitiesStep(stepContext) {
-        // Insert the problem cause in the ticket info
+        // Insert the problem cause in the ticket info.
         stepContext.values.ticketInfo.problemCause = stepContext.result;
 
         await stepContext.context.sendActivities([
@@ -131,6 +128,7 @@ class TicketDialog extends ComponentDialog {
             { type: 'message', text: 'Let\'start with the first. We will type one solution at a time' }
         ]);
 
+        // Call the dialog used to insert the possible solutions to the problem.
         return await stepContext.beginDialog(POSSIBILITIES_DIALOG);
     }
 
@@ -139,13 +137,21 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async solutionStep(stepContext) {
+        console.log('TICKET DIALOG: solutionStep');
+        // Get the possibile solutions inserted by the user in the previos step.
         stepContext.values.ticketInfo.problemPossibilities = stepContext.result || [];
-
+        console.log('The ticket dialog is at solution step. The ticket created until now is:');
         console.log(stepContext.values.ticketInfo);
 
+        // Create the list of options to choose from.
+        const options = stepContext.values.ticketInfo.problemPossibilities;
+
         const message = 'What solution do you suggest?';
-        return await stepContext.prompt(TEXT_PROMPT, {
-            prompt: message
+        // Prompt the user for a choice.
+        return await stepContext.prompt(CHOICE_PROMPT, {
+            prompt: message,
+            retryPrompt: 'Please choose an option from the list.',
+            choices: options
         });
     }
 
@@ -154,9 +160,28 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async finalChoiceStep(stepContext) {
+        // Get the favourite user solution to the problem.
+        stepContext.values.ticketInfo.problemSolution = stepContext.result.value;
+
+        // Create the ticket object.
         const ticketInfo = stepContext.values.ticketInfo;
+        const ticket = new Ticket(
+            ticketInfo.user,
+            ticketInfo.problemDefinition,
+            ticketInfo.problemCause,
+            ticketInfo.problemPossibilities,
+            ticketInfo.problemSolution
+        );
+        console.log(ticket.toString());
+
+        await stepContext.context.sendActivities([
+            { type: 'message', text: 'We are at the final step.' },
+            { type: 'message', text: 'During this interaction you have reflected about the problem.' },
+            { type: 'message', text: 'If you want to send the ticket to your manager, type \'send\', else type \'done\'.' }
+        ]);
+
         // Exit the dialog, returning the collected user information.
-        return await stepContext.endDialog(ticketInfo);
+        return await stepContext.endDialog(ticket);
     }
 }
 
