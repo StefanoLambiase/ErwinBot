@@ -73,6 +73,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async firstStep(stepContext) {
+        console.log('TICKET DIALOG: firstStep\n');
         // Instantiate the object that contains ticket info and insert it in the context.
         stepContext.values.ticketInfo = new Ticket();
 
@@ -91,6 +92,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async definitionStep(stepContext) {
+        console.log('TICKET DIALOG: definitionStep\n');
         // Insert user name in the ticket info
         stepContext.values.ticketInfo.user = stepContext.result;
         console.log(stepContext.result);
@@ -106,6 +108,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async causeStep(stepContext) {
+        console.log('TICKET DIALOG: causeStep\n');
         // Insert the problem definition in the ticket info
         stepContext.values.ticketInfo.problemDefinition = stepContext.result;
 
@@ -120,6 +123,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async possibilitiesStep(stepContext) {
+        console.log('TICKET DIALOG: possibilitiesStep\n');
         // Insert the problem cause in the ticket info.
         stepContext.values.ticketInfo.problemCause = stepContext.result;
 
@@ -137,7 +141,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async solutionStep(stepContext) {
-        console.log('TICKET DIALOG: solutionStep');
+        console.log('TICKET DIALOG: solutionStep\n');
         // Get the possibile solutions inserted by the user in the previos step.
         stepContext.values.ticketInfo.problemPossibilities = stepContext.result || [];
         console.log('The ticket dialog is at solution step. The ticket created until now is:');
@@ -160,6 +164,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async finalChoiceStep(stepContext) {
+        console.log('TICKET DIALOG: finalChoiceStep\n');
         // Get the favourite user solution to the problem.
         stepContext.values.ticketInfo.problemSolution = stepContext.result.value;
 
