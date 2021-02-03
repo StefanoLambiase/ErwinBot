@@ -17,6 +17,12 @@ const {
     LuisRecognizer
 } = require('botbuilder-ai');
 
+// Import models
+const { Ticket } = require('./model/ticket');
+
+// Import others dialogs
+const { PossibilitiesDialog, POSSIBILITIES_DIALOG } = require('./possiblitiesDialog');
+
 // Dialogs names
 const TICKET_DIALOG = 'TICKET_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
@@ -31,6 +37,7 @@ class TicketDialog extends ComponentDialog {
 
         // Add used dialogs.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+        this.addDialog(new PossibilitiesDialog(luisRecognizer));
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
             this.definitionStep.bind(this),
@@ -58,6 +65,9 @@ class TicketDialog extends ComponentDialog {
     }
 
     async firstStep(stepContext) {
+        // Instantiate the object that contains ticket info and insert it in the context.
+        stepContext.values.ticketInfo = new Ticket();
+
         await stepContext.context.sendActivities([
             { type: 'message', text: 'I, the Bot-mander, am here to help you!!!' },
             { type: 'message', text: 'Before contact your manager, we need to collect some information!' },
@@ -69,18 +79,30 @@ class TicketDialog extends ComponentDialog {
     }
 
     async definitionStep(stepContext) {
+        // Insert user name in the ticket info
+        stepContext.values.ticketInfo.user = stepContext.result;
 
         const message = 'What is the problem?';
+        return await stepContext.prompt(TEXT_PROMPT, {
+            prompt: message
+        });
     }
 
     async causeStep(stepContext) {
+        // Insert the problem definition in the ticket info
+        stepContext.values.ticketInfo.problemDefinition = stepContext.result;
 
         const message = 'What is the cause of the problem?';
+        return await stepContext.prompt(TEXT_PROMPT, {
+            prompt: message
+        });
     }
 
     async possibilitiesStep(stepContext) {
+        // Insert the problem cause in the ticket info
+        stepContext.values.ticketInfo.problemCause = stepContext.result;
 
-        const message = 'What are all possible solutions of the problem?';
+        return await stepContext.beginDialog(POSSIBILITIES_DIALOG);
     }
 
     async solutionStep(stepContext) {
