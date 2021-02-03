@@ -9,7 +9,8 @@
         "start": "node ./index.js",
         "watch": "nodemon ./index.js",
         "lint": "eslint .",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "log-remote": "az webapp log tail --name ErwinBot --resource-group ErwinBotResourceGroup"
     },
     "repository": {
         "type": "git",

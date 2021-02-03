@@ -1,4 +1,3 @@
-
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
 const { WebClient, LogLevel } = require('@slack/web-api');
 
@@ -20,6 +19,9 @@ const {
 const {
     LuisRecognizer
 } = require('botbuilder-ai');
+
+// Imports for others dialogs
+const { TicketDialog, TICKET_DIALOG } = require('./ticketDialogs/ticketDialog');
 
 // Imports for Slack
 const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
@@ -45,6 +47,7 @@ class MainDialog extends ComponentDialog {
         //  Add used dialog.
         // ! if you want to add a new dialog in the steps, first add it here.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+        this.addDialog(new TicketDialog(luisRecognizer));
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
             this.optionsStep.bind(this),
@@ -124,8 +127,6 @@ class MainDialog extends ComponentDialog {
                 }
             ]);
 
-            console.log('Skaten');
-
             // WebClient insantiates a client that can call API methods
             // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
             const client = new WebClient({
@@ -133,10 +134,6 @@ class MainDialog extends ComponentDialog {
                 // LogLevel can be imported and used to make debugging simpler
                 logLevel: LogLevel.DEBUG
             });
-
-            console.log('Skaten2');
-
-            console.log('Skaten3');
 
             try {
                 // Call the chat.scheduleMessage method using the WebClient
@@ -153,7 +150,7 @@ class MainDialog extends ComponentDialog {
             }
         } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             await step.context.sendActivity(MessageFactory.text('ticketing', 'ticketing'));
-            // return await step.beginDialog(TICKET_DIALOG);
+            return await step.beginDialog(TICKET_DIALOG);
         } else {
             // The user did not enter input that this bot was built to handle.
             reply.text = 'Sorry! I can\'t recognize your command. Retry!';
