@@ -28,6 +28,10 @@ const TICKET_DIALOG = 'TICKET_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
+/**
+ * Implements the functionality used to open a problem ticket.
+ * The philosophy used for this interaction has been ispired by a Dale Carnagie book.
+ */
 class TicketDialog extends ComponentDialog {
     constructor(luisRecognizer, userState) {
         super(TICKET_DIALOG);
@@ -45,7 +49,8 @@ class TicketDialog extends ComponentDialog {
             this.definitionStep.bind(this),
             this.causeStep.bind(this),
             this.possibilitiesStep.bind(this),
-            this.solutionStep.bind(this)
+            this.solutionStep.bind(this),
+            this.finalChoiceStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -66,6 +71,10 @@ class TicketDialog extends ComponentDialog {
         }
     }
 
+    /**
+     * Implement the first step of the dialog used to open a problem ticket.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async firstStep(stepContext) {
         // Instantiate the object that contains ticket info and insert it in the context.
         stepContext.values.ticketInfo = new Ticket();
@@ -80,6 +89,10 @@ class TicketDialog extends ComponentDialog {
         });
     }
 
+    /**
+     * Implement the interaction that asks the user to define the problem.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async definitionStep(stepContext) {
         // Insert user name in the ticket info
         stepContext.values.ticketInfo.user = stepContext.result;
@@ -91,6 +104,10 @@ class TicketDialog extends ComponentDialog {
         });
     }
 
+    /**
+     * Implements the interaction that asks the user to define the problem cause.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async causeStep(stepContext) {
         // Insert the problem definition in the ticket info
         stepContext.values.ticketInfo.problemDefinition = stepContext.result;
@@ -101,6 +118,10 @@ class TicketDialog extends ComponentDialog {
         });
     }
 
+    /**
+     * Implements the interaction that asks the user to list the possible solutions to the problem.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async possibilitiesStep(stepContext) {
         // Insert the problem cause in the ticket info
         stepContext.values.ticketInfo.problemCause = stepContext.result;
@@ -113,6 +134,10 @@ class TicketDialog extends ComponentDialog {
         return await stepContext.beginDialog(POSSIBILITIES_DIALOG);
     }
 
+    /**
+     * Implements the interaction that asks the user to choice a favourite solution between the previously listed.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async solutionStep(stepContext) {
         stepContext.values.ticketInfo.problemPossibilities = stepContext.result || [];
 
@@ -124,7 +149,11 @@ class TicketDialog extends ComponentDialog {
         });
     }
 
-    async choiceStep(stepContext) {
+    /**
+     * Implements the interaction that asks the user to choice between send a ticket to the PM or close the ticket.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
+    async finalChoiceStep(stepContext) {
         const ticketInfo = stepContext.values.ticketInfo;
         // Exit the dialog, returning the collected user information.
         return await stepContext.endDialog(ticketInfo);
