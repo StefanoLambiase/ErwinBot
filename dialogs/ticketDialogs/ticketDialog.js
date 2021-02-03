@@ -37,7 +37,9 @@ class TicketDialog extends ComponentDialog {
 
         // Add used dialogs.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+
         this.addDialog(new PossibilitiesDialog(luisRecognizer));
+
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
             this.definitionStep.bind(this),
@@ -81,6 +83,7 @@ class TicketDialog extends ComponentDialog {
     async definitionStep(stepContext) {
         // Insert user name in the ticket info
         stepContext.values.ticketInfo.user = stepContext.result;
+        console.log(stepContext.result);
 
         const message = 'What is the problem?';
         return await stepContext.prompt(TEXT_PROMPT, {
@@ -102,12 +105,29 @@ class TicketDialog extends ComponentDialog {
         // Insert the problem cause in the ticket info
         stepContext.values.ticketInfo.problemCause = stepContext.result;
 
+        await stepContext.context.sendActivities([
+            { type: 'message', text: 'Now we need to lists all possible solutions that you can find to solve the problem' },
+            { type: 'message', text: 'Let\'start with the first. We will type one solution at a time' }
+        ]);
+
         return await stepContext.beginDialog(POSSIBILITIES_DIALOG);
     }
 
     async solutionStep(stepContext) {
+        stepContext.values.ticketInfo.problemPossibilities = stepContext.result || [];
+
+        console.log(stepContext.values.ticketInfo);
 
         const message = 'What solution do you suggest?';
+        return await stepContext.prompt(TEXT_PROMPT, {
+            prompt: message
+        });
+    }
+
+    async choiceStep(stepContext) {
+        const ticketInfo = stepContext.values.ticketInfo;
+        // Exit the dialog, returning the collected user information.
+        return await stepContext.endDialog(ticketInfo);
     }
 }
 
