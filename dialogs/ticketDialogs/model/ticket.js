@@ -10,6 +10,19 @@ class Ticket {
         this.problemSolution = problemSolution;
     }
 
+    getPossibilitiesAsString() {
+        // Create the solutions sub-string.
+        let solutionsString = '';
+        if (this.problemPossibilities.length > 0) {
+            this.problemPossibilities.forEach((item, index) => {
+                solutionsString = solutionsString.concat('\n  ' + (index + 1) + '. ' + item);
+            });
+        } else {
+            solutionsString = solutionsString.concat('\nNo solutions');
+        }
+        return solutionsString;
+    }
+
     toString() {
         // Create the solutions sub-string.
         let solutionsString = '';

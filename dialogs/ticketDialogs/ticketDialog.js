@@ -47,7 +47,8 @@ class TicketDialog extends ComponentDialog {
             this.causeStep.bind(this),
             this.possibilitiesStep.bind(this),
             this.solutionStep.bind(this),
-            this.finalChoiceStep.bind(this)
+            this.finalChoiceStep.bind(this),
+            this.finalStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -73,7 +74,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async firstStep(stepContext) {
-        console.log('TICKET DIALOG: firstStep\n');
+        console.log('**TICKET DIALOG: firstStep**\n');
         // Instantiate the object that contains ticket info and insert it in the context.
         stepContext.values.ticketInfo = new Ticket();
 
@@ -92,7 +93,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async definitionStep(stepContext) {
-        console.log('TICKET DIALOG: definitionStep\n');
+        console.log('**TICKET DIALOG: definitionStep**\n');
         // Insert user name in the ticket info
         stepContext.values.ticketInfo.user = stepContext.result;
         console.log(stepContext.result);
@@ -108,7 +109,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async causeStep(stepContext) {
-        console.log('TICKET DIALOG: causeStep\n');
+        console.log('**TICKET DIALOG: causeStep**\n');
         // Insert the problem definition in the ticket info
         stepContext.values.ticketInfo.problemDefinition = stepContext.result;
 
@@ -123,7 +124,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async possibilitiesStep(stepContext) {
-        console.log('TICKET DIALOG: possibilitiesStep\n');
+        console.log('**TICKET DIALOG: possibilitiesStep**\n');
         // Insert the problem cause in the ticket info.
         stepContext.values.ticketInfo.problemCause = stepContext.result;
 
@@ -141,7 +142,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async solutionStep(stepContext) {
-        console.log('TICKET DIALOG: solutionStep\n');
+        console.log('**TICKET DIALOG: solutionStep**\n');
         // Get the possibile solutions inserted by the user in the previos step.
         stepContext.values.ticketInfo.problemPossibilities = stepContext.result || [];
         console.log('The ticket dialog is at solution step. The ticket created until now is:');
@@ -164,7 +165,7 @@ class TicketDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async finalChoiceStep(stepContext) {
-        console.log('TICKET DIALOG: finalChoiceStep\n');
+        console.log('**TICKET DIALOG: finalChoiceStep**\n');
         // Get the favourite user solution to the problem.
         stepContext.values.ticketInfo.problemSolution = stepContext.result.value;
 
@@ -179,14 +180,60 @@ class TicketDialog extends ComponentDialog {
         );
         console.log(ticket.toString());
 
-        await stepContext.context.sendActivities([
-            { type: 'message', text: 'We are at the final step.' },
-            { type: 'message', text: 'During this interaction you have reflected about the problem.' },
-            { type: 'message', text: 'If you want to send the ticket to your manager, type \'send\', else type \'done\'.' }
-        ]);
+        console.log(stepContext.context.activity.channelId);
+        // * Check if the channel used by the user is Slack or not.
+        if (stepContext.context.activity.channelId === 'slack') {
+            await stepContext.context.sendActivity('This feature is not supported on Slack. Sorry!');
+        } else {
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'We are at the final step.' },
+                // Send ticket informations as messages.
+                { type: 'message', text: 'These are the problem informations' },
+                { type: 'message', text: '**Problem definition**: ' + ticket.problemDefinition },
+                { type: 'message', text: '**Problem cause**: ' + ticket.problemCause },
+                { type: 'message', text: '**Possible solutions**: ' + ticket.getPossibilitiesAsString() },
+                { type: 'message', text: '**Favourite solution**: ' + ticket.problemSolution },
+                // Send a reflexive message.
+                { type: 'message', text: 'During this interaction you have reflected about the problem.' }
+            ]);
+        }
 
-        // Exit the dialog, returning the collected user information.
-        return await stepContext.endDialog(ticket);
+        const options = ['send', 'done'];
+        const message = 'If you want to send the ticket to your manager, type \'send\', else type \'done\'.';
+        // Prompt the user for a choice.
+        return await stepContext.prompt(CHOICE_PROMPT, {
+            prompt: message,
+            retryPrompt: 'Please choose an option from the list.',
+            choices: options
+        });
+    }
+
+    /**
+     * Implements the final user decision about the ticket. Send it or avoid.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
+    async finalStep(stepContext) {
+        console.log('**TICKET DIALOG: finalStep**\n');
+
+        const userInput = stepContext.result.value;
+        if (userInput === 'done') {
+            console.log('Well done');
+            // Exit the dialog.
+            return await stepContext.endDialog();
+        } else {
+            // Create the ticket object.
+            const ticketInfo = stepContext.values.ticketInfo;
+            const ticket = new Ticket(
+                ticketInfo.user,
+                ticketInfo.problemDefinition,
+                ticketInfo.problemCause,
+                ticketInfo.problemPossibilities,
+                ticketInfo.problemSolution
+            );
+            console.log(ticket.toString());
+            // Exit the dialog, returning the collected user information.
+            return await stepContext.endDialog(ticket);
+        }
     }
 }
 
