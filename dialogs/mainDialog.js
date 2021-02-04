@@ -30,7 +30,7 @@ const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessa
 const {
     SCRUM_DIALOG,
     ScrumDialog
-} = require('../scrumDialogs/scrumDialog');
+} = require('./scrumDialogs/scrumDialog');
 
 // Dialogs names
 const MAIN_DIALOG = 'MAIN_DIALOG';
@@ -118,7 +118,7 @@ class MainDialog extends ComponentDialog {
         
         // Part to select the dialogs.
         if (specifiedOption === 'slack') {
-            await step.beginDialog(SCRUM_DIALOG);
+            return await step.beginDialog(SCRUM_DIALOG);
         } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             await step.context.sendActivity(MessageFactory.text('ticketing', 'ticketing'));
             return await step.beginDialog(TICKET_DIALOG);

@@ -14,9 +14,8 @@ const {
 } = require('botbuilder-dialogs');
 
 // Imports for Slack
-const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
-const DatepickerSlack = require('../botResources/slack/DatepickerSlack.json');
-const TimepickerSlack = require('../botResources/slack/TimepickerSlack.json');
+const DatepickerSlack = require('../../botResources/slack/DatepickerSlack.json')
+const TimepickerSlack = require('../../botResources/slack/TimepickerSlack.json');
 
 // Dialogs names
 const SCRUM_DIALOG = 'SCRUM_DIALOG';
