@@ -53,7 +53,9 @@ class SendEmailDialog extends ComponentDialog {
         const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (emailInserted.match(regexEmail)) {
             reply = 'I\'ll send an email to ' + emailInserted;
-            stepContext.context.sendActivity(reply);
+            await stepContext.context.sendActivities([
+                { type: 'message', text: reply }
+            ]);
 
             return await stepContext.endDialog(emailInserted);
         } else {

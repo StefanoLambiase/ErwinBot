@@ -14,6 +14,9 @@ const POSSIBILITIES_DIALOG = 'POSSIBILITIES_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
+/**
+ * Implements the functionality used to ask the user to insert possible solutions to a problem.
+ */
 class PossibilitiesDialog extends ComponentDialog {
     constructor(luisRecognizer, userState) {
         super(POSSIBILITIES_DIALOG);
@@ -38,6 +41,10 @@ class PossibilitiesDialog extends ComponentDialog {
         this.initialDialogId = WATERFALL_DIALOG;
     }
 
+    /**
+     * Implements the interaction used to collect a possible solution to a problem.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async possibilityStep(stepContext) {
         // Continue using the same selection list, if any, from the previous iteration of this dialog.
         const list = Array.isArray(stepContext.options) ? stepContext.options : [];
@@ -56,6 +63,10 @@ class PossibilitiesDialog extends ComponentDialog {
         });
     }
 
+    /**
+     * Implements the solution save and the iteration to collect more solutions.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async loopStep(stepContext) {
         // Retrieve their selection list, the choice they made, and whether they chose to finish.
         const list = stepContext.values[this.possibilitiesInserted];
