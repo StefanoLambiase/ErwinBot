@@ -24,6 +24,12 @@ const {
 // Imports for Slack
 const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
 
+// Imports other dialogs
+const {
+    SCRUM_DIALOG,
+    ScrumDialog
+} = require('../scrumDialogs/scrumDialog');
+
 // Dialogs names
 const MAIN_DIALOG = 'MAIN_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
@@ -45,6 +51,7 @@ class MainDialog extends ComponentDialog {
         //  Add used dialog.
         // ! if you want to add a new dialog in the steps, first add it here.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+        this.addDialog(new ScrumDialog());
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
             this.optionsStep.bind(this),
@@ -111,46 +118,7 @@ class MainDialog extends ComponentDialog {
 
         // Part to select the dialogs.
         if (specifiedOption === 'slack') {
-            await step.context.sendActivities([
-                { type: 'message', text: 'Slack Message' },
-                { channelData: SampleFidelityMessage },
-                {
-                    channelData: {
-                        channel: channelId,
-                        text: 'Looking towards the future',
-                        // Time to post message, in Unix Epoch timestamp format
-                        post_at: 1612282027
-                    }
-                }
-            ]);
-
-            console.log('Skaten');
-
-            // WebClient insantiates a client that can call API methods
-            // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
-            const client = new WebClient({
-                token: 'xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI',
-                // LogLevel can be imported and used to make debugging simpler
-                logLevel: LogLevel.DEBUG
-            });
-
-            console.log('Skaten2');
-
-            console.log('Skaten3');
-
-            try {
-                // Call the chat.scheduleMessage method using the WebClient
-                const result = await client.chat.scheduleMessage({
-                    channel: channelId,
-                    text: 'Looking towards the future',
-                    // Time to post message, in Unix Epoch timestamp format
-                    post_at: tomorrow.getTime() / 1000
-                });
-
-                console.log(result);
-            } catch (error) {
-                console.error(error);
-            }
+            await step.beginDialog(SCRUM_DIALOG);
         } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             await step.context.sendActivity(MessageFactory.text('ticketing', 'ticketing'));
             // return await step.beginDialog(TICKET_DIALOG);
