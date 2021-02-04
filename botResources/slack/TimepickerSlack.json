@@ -15,7 +15,7 @@
 		"text": "Cancel",
 		"emoji": true
 	},
-	"blocks": [
+	"attachments": [
 		{
 			"type": "section",
 			"block_id": "section1234",
