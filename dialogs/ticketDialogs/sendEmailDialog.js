@@ -14,6 +14,9 @@ const SEND_EMAIL_DIALOG = 'SEND_EMAIL_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
+/**
+ * Implements the functionality used to send an email with a ticket information inside.
+ */
 class SendEmailDialog extends ComponentDialog {
     constructor(luisRecognizer) {
         super(SEND_EMAIL_DIALOG);
@@ -32,6 +35,10 @@ class SendEmailDialog extends ComponentDialog {
         this.initialDialogId = WATERFALL_DIALOG;
     }
 
+    /**
+     * Implements the interaction that asks the user to insert the receiver email.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async insertEmailStep(stepContext) {
         // Get the ticket info to insert in the mail.
         const ticketInfo = stepContext.options;
@@ -44,6 +51,12 @@ class SendEmailDialog extends ComponentDialog {
         });
     }
 
+    /**
+     * Implements the email inserted check.
+     * If the email is correct, the bot send the ticket informations to the mail.
+     * If the email isn't correct, the bot ask again the email.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async loopStep(stepContext) {
         // Get the receiver email.
         const emailInserted = stepContext.result;
