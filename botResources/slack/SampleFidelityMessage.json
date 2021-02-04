@@ -45,6 +45,15 @@
                     "value": "bad"
                 }
             ]
+        },
+        {
+            "type": "timepicker",
+            "action_id": "timepicker123",
+            "initial_time": "09:00",
+            "placeholder": {
+                "type": "plain_text",
+                "text": "Select a time"
+            }
         }
     ]
 }
