@@ -45,15 +45,23 @@
                     "value": "bad"
                 }
             ]
-        },
+        },    
         {
-            "type": "timepicker",
-            "action_id": "timepicker123",
-            "initial_time": "09:00",
-            "placeholder": {
-                "type": "plain_text",
-                "text": "Select a time"
+            "type": "section",
+            "block_id": "section1234",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Pick a date for the deadline."
+              },
+              "accessory": {
+                "type": "timepicker",
+                "action_id": "timepicker123",
+                "initial_time": "11:40",
+                "placeholder": {
+                  "type": "plain_text",
+                  "text": "Select a time"
+                }
+              }
             }
-        }
     ]
 }
