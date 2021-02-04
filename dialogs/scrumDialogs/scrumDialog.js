@@ -15,6 +15,8 @@ const {
 
 // Imports for Slack
 const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
+const DatepickerSlack = require('../botResources/slack/DatepickerSlack.json');
+const TimepickerSlack = require('../botResources/slack/TimepickerSlack.json');
 
 // Dialogs names
 const SCRUM_DIALOG = 'SCRUM_DIALOG';
@@ -52,15 +54,21 @@ class ScrumDialog extends ComponentDialog {
     }
 
     async dateStep(step){
-
+        await step.context.sendActivities([
+            { type: 'message', text: 'Set up you daily scrum' },
+            { channelData: DatepickerSlack },
+        ]);
     }
 
     async timeStep(step){
-
+        await step.context.sendActivities([
+            { type: 'message', text: 'Set up you daily scrum' },
+            { channelData: TimepickerSlack },
+        ]);
     }
 
-    async questioStep(step){
-
+    async questionStep(step){
+        
     }
 }
 

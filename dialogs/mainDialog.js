@@ -113,9 +113,7 @@ class MainDialog extends ComponentDialog {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate());
         tomorrow.setHours(16, 43, 0);
-
-        const channelId = 'C01LQ3DG8DR';
-
+        
         // Part to select the dialogs.
         if (specifiedOption === 'slack') {
             await step.beginDialog(SCRUM_DIALOG);
