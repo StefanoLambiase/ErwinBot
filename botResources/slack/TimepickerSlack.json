@@ -1,17 +1,37 @@
 {
-    "type": "section",
-    "block_id": "section1234",
-    "text": {
-      "type": "mrkdwn",
-      "text": "Pick a time for daily scrum"
-    },
-    "accessory": {
-      "type": "timepicker",
-      "action_id": "timepicker123",
-      "initial_time": "09:00",
-      "placeholder": {
-        "type": "plain_text",
-        "text": "Select a time"
-      }
-    }
-  }
+	"title": {
+		"type": "plain_text",
+		"text": "Erwin Scrum Manager",
+		"emoji": true
+	},
+	"submit": {
+		"type": "plain_text",
+		"text": "Submit",
+		"emoji": true
+	},
+	"type": "modal",
+	"close": {
+		"type": "plain_text",
+		"text": "Cancel",
+		"emoji": true
+	},
+	"blocks": [
+		{
+			"type": "section",
+			"block_id": "section1234",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Pick time for daily scrum"
+			},
+			"accessory": {
+				"type": "timepicker",
+				"action_id": "timepicker123",
+				"initial_time": "09:00",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select a time"
+				}
+			}
+		}
+	]
+}
