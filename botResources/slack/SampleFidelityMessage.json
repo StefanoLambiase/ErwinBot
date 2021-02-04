@@ -47,12 +47,15 @@
             ]
         },    
         {
-            "type": "section",
-            "text": {
+            "blocks": [
+            {
+              "type": "section",
+              "block_id": "section1234",
+              "text": {
                 "type": "mrkdwn",
                 "text": "Pick a date for the deadline."
-            },
-            "accessory": {
+              },
+              "accessory": {
                 "type": "timepicker",
                 "action_id": "timepicker123",
                 "initial_time": "11:40",
@@ -60,7 +63,9 @@
                   "type": "plain_text",
                   "text": "Select a time"
                 }
+              }
             }
+          ]
         }
     ]
 }
