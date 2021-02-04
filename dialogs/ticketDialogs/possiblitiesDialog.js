@@ -18,7 +18,7 @@ class PossibilitiesDialog extends ComponentDialog {
     constructor(luisRecognizer, userState) {
         super(POSSIBILITIES_DIALOG);
 
-        if (!luisRecognizer) throw new Error('[MainDialog]: Missing parameter \'luisRecognizer\' is required');
+        if (!luisRecognizer) throw new Error('[PossibilitiesDialog]: Missing parameter \'luisRecognizer\' is required');
         this.LuisRecognizer = LuisRecognizer;
 
         // Define a "done" response for the company selection prompt.

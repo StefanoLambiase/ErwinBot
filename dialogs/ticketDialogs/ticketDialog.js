@@ -17,6 +17,7 @@ const { Ticket } = require('./model/ticket');
 
 // Import others dialogs
 const { PossibilitiesDialog, POSSIBILITIES_DIALOG } = require('./possiblitiesDialog');
+const { SendEmailDialog, SEND_EMAIL_DIALOG } = require('./sendEmailDialog');
 
 // Dialogs names
 const TICKET_DIALOG = 'TICKET_DIALOG';
@@ -40,6 +41,7 @@ class TicketDialog extends ComponentDialog {
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
         this.addDialog(new PossibilitiesDialog(luisRecognizer));
+        this.addDialog(new SendEmailDialog(luisRecognizer));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
@@ -231,8 +233,12 @@ class TicketDialog extends ComponentDialog {
                 ticketInfo.problemSolution
             );
             console.log(ticket.toString());
-            // Exit the dialog, returning the collected user information.
-            return await stepContext.endDialog(ticket);
+
+            const reply = 'Ok, I\'ll send an email to your PM with ticket information';
+            stepContext.context.sendActivity(reply);
+
+            // Call the dialog used to insert the possible solutions to the problem.
+            return await stepContext.beginDialog(SEND_EMAIL_DIALOG);
         }
     }
 }
