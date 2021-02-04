@@ -33,6 +33,11 @@ class SendEmailDialog extends ComponentDialog {
     }
 
     async insertEmailStep(stepContext) {
+        // Get the ticket info to insert in the mail.
+        const ticketInfo = stepContext.options;
+        stepContext.values.ticketInfo = ticketInfo;
+
+        // Ask the user to insert the receiver email.
         const message = 'Insert the receiver email';
         return await stepContext.prompt(TEXT_PROMPT, {
             prompt: message
@@ -40,8 +45,10 @@ class SendEmailDialog extends ComponentDialog {
     }
 
     async loopStep(stepContext) {
+        // Get the receiver email.
         const emailInserted = stepContext.result;
 
+        // Check if the email inserted match the email format.
         let reply = '';
         const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (emailInserted.match(regexEmail)) {
@@ -53,7 +60,7 @@ class SendEmailDialog extends ComponentDialog {
             reply = 'The email inserted doesn\'t match the email format. Please retry.';
             stepContext.context.sendActivity(reply);
 
-            return await stepContext.replaceDialog(SEND_EMAIL_DIALOG);
+            return await stepContext.replaceDialog(SEND_EMAIL_DIALOG, stepContext.values.ticketInfo);
         }
     }
 }

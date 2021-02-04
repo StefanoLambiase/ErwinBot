@@ -238,7 +238,7 @@ class TicketDialog extends ComponentDialog {
             stepContext.context.sendActivity(reply);
 
             // Call the dialog used to insert the possible solutions to the problem.
-            return await stepContext.beginDialog(SEND_EMAIL_DIALOG);
+            return await stepContext.beginDialog(SEND_EMAIL_DIALOG, ticketInfo);
         }
     }
 }
