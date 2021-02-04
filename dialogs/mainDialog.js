@@ -53,7 +53,10 @@ class MainDialog extends ComponentDialog {
         //  Add used dialog.
         // ! if you want to add a new dialog in the steps, first add it here.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+
         this.addDialog(new ScrumDialog());
+        this.addDialog(new TicketDialog(luisRecognizer, userState));
+
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
             this.optionsStep.bind(this),
@@ -115,12 +118,11 @@ class MainDialog extends ComponentDialog {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate());
         tomorrow.setHours(16, 43, 0);
-        
+
         // Part to select the dialogs.
         if (specifiedOption === 'slack') {
             return await step.beginDialog(SCRUM_DIALOG);
         } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
-            await step.context.sendActivity(MessageFactory.text('ticketing', 'ticketing'));
             return await step.beginDialog(TICKET_DIALOG);
         } else {
             // The user did not enter input that this bot was built to handle.
