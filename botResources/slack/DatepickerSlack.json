@@ -1,22 +1,11 @@
 {
-  "text": "Erwin Scrum Manager",
-	"attachments": [
-		{
-			"type": "section",
-			"block_id": "section1234",
-			"text": {
-				"type": "mrkdwn",
-				"text": "Pick a date for the daily scrum"
-			},
-			"accessory": {
-				"type": "datepicker",
-				"action_id": "datepicker123",
-				"initial_date": "2021-02-05",
-				"placeholder": {
-					"type": "plain_text",
-					"text": "Select a date"
-				}
+	"attachments": {
+		"type": "datepicker",
+		"action_id": "datepicker123",
+		"initial_time": "09:00",
+		"placeholder": {
+				"type": "plain_text",
+				"text": "Select a time"
 			}
-		}
-	]
+	}
 }
