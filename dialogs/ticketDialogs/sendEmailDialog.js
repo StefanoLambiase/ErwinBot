@@ -59,11 +59,11 @@ class SendEmailDialog extends ComponentDialog {
      */
     async loopStep(stepContext) {
         // Get the receiver email.
-        let emailInserted = '';
+        let emailInserted = stepContext.result;
+        console.log(emailInserted);
         if (stepContext.context.activity.channelId === 'slack') {
-            emailInserted = stepContext.result.value;
-        } else {
-            emailInserted = stepContext.result;
+            const index = emailInserted.indexOf('|');
+            emailInserted = emailInserted.splice(index + 1, emailInserted.lenght - 1);
         }
         console.log(emailInserted);
 
