@@ -59,7 +59,12 @@ class SendEmailDialog extends ComponentDialog {
      */
     async loopStep(stepContext) {
         // Get the receiver email.
-        const emailInserted = stepContext.result;
+        let emailInserted = '';
+        if (stepContext.context.activity.channelId === 'slack') {
+            emailInserted = stepContext.result.value;
+        } else {
+            emailInserted = stepContext.result;
+        }
         console.log(emailInserted);
 
         // Check if the email inserted match the email format.
