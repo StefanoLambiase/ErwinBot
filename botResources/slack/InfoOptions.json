@@ -1,0 +1,30 @@
+{
+    "text": "Info Point :tada:",
+    "attachments": [
+        {
+            "type": "section",
+            "title": "What's SCRUM?",
+            "text": {
+                "type": "mrkdwn",
+                "text": "For every info go here: \n <https://www.scrum.org/resources/what-is-scrum | SCRUM's site>"
+            }
+        },
+        {
+            "type": "section",
+            "title": "More info about ErwinBot",
+            "text": {
+                "type": "mrkdwn",
+                "text": "<https://github.com/StefanoLambiase/ErwinBot> | Repository GitHub ",
+                "image_url": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fgithub.com%2Fgithub&psig=AOvVaw33U351Kmd0ytEMFnrPlBzn&ust=1612640157398000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCLDZu_C-0-4CFQAAAAAdAAAAABAU"
+            }
+        },
+        {
+            "type": "section",
+            "title": "About us!",
+            "text": {
+                "type": "mrkdwn",
+                "text": "<https://github.com/StefanoLambiaseStefano> | Stefano Lambiase \n <https://github.com/ACupito> | Andrea Cupito"
+            }
+        }
+    ]
+}
