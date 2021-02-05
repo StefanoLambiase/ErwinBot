@@ -40,6 +40,8 @@ class SendEmailDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async insertEmailStep(stepContext) {
+        console.log('**SEND EMAIL DIALOG: insertEmailStep**');
+
         // Get the ticket info to insert in the mail.
         const ticketInfo = stepContext.options;
         stepContext.values.ticketInfo = ticketInfo;
@@ -58,14 +60,17 @@ class SendEmailDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async loopStep(stepContext) {
+        console.log('**SEND EMAIL DIALOG: loopStep**');
+
         // Get the receiver email.
         let emailInserted = stepContext.result;
-        console.log(emailInserted);
+        console.log('String inserted by the user: ' + emailInserted);
+        // String slice if channel is Slack.
         if (stepContext.context.activity.channelId === 'slack' && emailInserted.includes('<mailto:')) {
             const index = emailInserted.indexOf('|');
             emailInserted = emailInserted.slice(index + 1, emailInserted.length - 1);
+            console.log('String from Slack modified: ' + emailInserted);
         }
-        console.log(emailInserted);
 
         // Check if the email inserted match the email format.
         let reply = '';

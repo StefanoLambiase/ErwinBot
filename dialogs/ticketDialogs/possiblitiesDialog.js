@@ -46,6 +46,8 @@ class PossibilitiesDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async possibilityStep(stepContext) {
+        console.log('**POSSIBILITIES DIALOG: possibilityStep**');
+
         // Continue using the same selection list, if any, from the previous iteration of this dialog.
         const list = Array.isArray(stepContext.options) ? stepContext.options : [];
         stepContext.values[this.possibilitiesInserted] = list;
@@ -68,6 +70,8 @@ class PossibilitiesDialog extends ComponentDialog {
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async loopStep(stepContext) {
+        console.log('**POSSIBILITIES DIALOG: loopStep**');
+
         // Retrieve their selection list, the choice they made, and whether they chose to finish.
         const list = stepContext.values[this.possibilitiesInserted];
         const userInput = stepContext.result;
