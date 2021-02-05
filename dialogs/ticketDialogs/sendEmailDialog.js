@@ -61,7 +61,7 @@ class SendEmailDialog extends ComponentDialog {
         // Get the receiver email.
         let emailInserted = stepContext.result;
         console.log(emailInserted);
-        if (stepContext.context.activity.channelId === 'slack') {
+        if (stepContext.context.activity.channelId === 'slack' && emailInserted.includes('<mailto:')) {
             const index = emailInserted.indexOf('|');
             emailInserted = emailInserted.splice(index + 1, emailInserted.lenght - 1);
         }
