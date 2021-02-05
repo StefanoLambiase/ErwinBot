@@ -235,7 +235,7 @@ class TicketDialog extends ComponentDialog {
             console.log(ticket.toString());
 
             const reply = 'Ok, I\'ll send an email to your PM with ticket information';
-            stepContext.context.sendActivity(reply);
+            await stepContext.context.sendActivity(reply);
 
             // Call the dialog used to insert the possible solutions to the problem.
             return await stepContext.beginDialog(SEND_EMAIL_DIALOG, ticketInfo);
