@@ -2,7 +2,6 @@
     "text": "Info Point :tada:",
     "attachments": [
         {
-            "type": "section",
             "title": "What's SCRUM?",
             "text": {
                 "type": "mrkdwn",
@@ -10,7 +9,6 @@
             }
         },
         {
-            "type": "section",
             "title": "More info about ErwinBot",
             "text": {
                 "type": "mrkdwn",
@@ -19,7 +17,6 @@
             }
         },
         {
-            "type": "section",
             "title": "About us!",
             "text": {
                 "type": "mrkdwn",
