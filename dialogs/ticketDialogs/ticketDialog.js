@@ -185,35 +185,33 @@ class TicketDialog extends ComponentDialog {
         console.log(stepContext.context.activity.channelId);
         // * Check if the channel used by the user is Slack or not.
         if (stepContext.context.activity.channelId === 'slack') {
-            await stepContext.context.sendActivity({
-                channelData: {
-                    text: 'We are at the final step',
-                    attachments: [
-                        {
-                            title: 'Problem informations',
-                            author_name: 'Erwin, the research group Bot-mander',
-                            author_icon: 'https://api.slack.com/img/api/homepage_custom_integrations-2x.png'
-                        },
-                        {
-                            title: 'Problem definition',
-                            text: ticket.problemDefinition
-                        },
-                        {
-                            title: 'Problem cause',
-                            text: ticket.problemCause
-                        },
-                        {
-                            title: 'Problem Solutions',
-                            text: ticket.getPossibilitiesAsString()
-                        },
-                        {
-                            title: 'Favourite solution',
-                            text: ticket.problemSolution
-                        }
-                    ]
-
-                }
-            });
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'We are at the final step.' },
+                {
+                    channelData: {
+                        title: 'Problem Informations',
+                        attachments: [
+                            {
+                                title: 'Problem definition',
+                                text: ticket.problemDefinition
+                            },
+                            {
+                                title: 'Problem cause',
+                                text: ticket.problemCause
+                            },
+                            {
+                                title: 'Problem Solutions',
+                                text: ticket.getPossibilitiesAsString()
+                            },
+                            {
+                                title: 'Favourite solution',
+                                text: ticket.problemSolution
+                            }
+                        ]
+                    }
+                },
+                { type: 'message', text: 'During this interaction you have reflected about the problem.' }
+            ]);
         } else {
             await stepContext.context.sendActivities([
                 { type: 'message', text: 'We are at the final step.' },
