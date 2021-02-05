@@ -24,18 +24,18 @@ const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
 class ScrumDialog extends ComponentDialog {
-    constructor(userState){
+    constructor(userState) {
         super(SCRUM_DIALOG);
 
-         // Adding used dialogs
-         this.addDialog(new TextPrompt(TEXT_PROMPT));
-         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-             this.dateStep.bind(this),
-             this.timeStep.bind(this),
-             this.questionStep.bind(this),
-         ]));
- 
-         this.initialDialogId = WATERFALL_DIALOG;
+        // Adding used dialogs
+        this.addDialog(new TextPrompt(TEXT_PROMPT));
+        this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
+            this.dateStep.bind(this),
+            this.timeStep.bind(this),
+            this.questionStep.bind(this)
+        ]));
+
+        this.initialDialogId = WATERFALL_DIALOG;
     }
 
     /**
@@ -53,22 +53,25 @@ class ScrumDialog extends ComponentDialog {
         }
     }
 
-    async dateStep(step){
-        await step.context.sendActivities([
+    async dateStep(step) {
+        return await step.context.sendActivities([
             { type: 'message', text: 'Set up you daily scrum' },
-            { channelData: SampleFidelityMessage },
+            { channelData: SampleFidelityMessage }
         ]);
     }
 
-    async timeStep(step){
-        await step.context.sendActivities([
-            { type: 'message', text: 'Set up you daily scrum' },
-            { channelData: DatepickerSlack },
+    async timeStep(step) {
+        return await step.context.sendActivities([
+            { type: 'message', text: 'Set up you daily scrum 2' },
+            { channelData: DatepickerSlack }
         ]);
     }
 
-    async questionStep(step){
-        
+    async questionStep(step) {
+        return await step.context.sendActivities([
+            { type: 'message', text: 'Set up you daily scrum 3' },
+            { channelData: DatepickerSlack }
+        ]);
     }
 }
 
