@@ -189,7 +189,7 @@ class TicketDialog extends ComponentDialog {
                 { type: 'message', text: 'We are at the final step.' },
                 {
                     channelData: {
-                        title: 'Problem Informations',
+                        text: 'Problem Informations',
                         attachments: [
                             {
                                 title: 'Problem definition',
@@ -251,14 +251,6 @@ class TicketDialog extends ComponentDialog {
         } else {
             // Create the ticket object.
             const ticketInfo = stepContext.values.ticketInfo;
-            const ticket = new Ticket(
-                ticketInfo.user,
-                ticketInfo.problemDefinition,
-                ticketInfo.problemCause,
-                ticketInfo.problemPossibilities,
-                ticketInfo.problemSolution
-            );
-            console.log(ticket.toString());
 
             const reply = 'Ok, I\'ll send an email to your PM with ticket information';
             await stepContext.context.sendActivity(reply);
