@@ -73,7 +73,7 @@ class SendEmailDialog extends ComponentDialog {
             return await stepContext.endDialog(emailInserted);
         } else {
             reply = 'The email inserted doesn\'t match the email format. Please retry.';
-            stepContext.context.sendActivity(reply);
+            await stepContext.context.sendActivity(reply);
 
             return await stepContext.replaceDialog(SEND_EMAIL_DIALOG, stepContext.values.ticketInfo);
         }
