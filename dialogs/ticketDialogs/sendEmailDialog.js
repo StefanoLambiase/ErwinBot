@@ -60,6 +60,7 @@ class SendEmailDialog extends ComponentDialog {
     async loopStep(stepContext) {
         // Get the receiver email.
         const emailInserted = stepContext.result;
+        console.log(emailInserted);
 
         // Check if the email inserted match the email format.
         let reply = '';
