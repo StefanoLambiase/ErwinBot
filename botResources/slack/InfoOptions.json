@@ -2,23 +2,36 @@
     "text": "Info Point :tada:",
     "attachments": [
         {
-            "title": "What's SCRUM?",
-            "text": {
-                "text": "For every info go here: \n <https://www.scrum.org/resources/what-is-scrum | SCRUM's site>"
-            }
+            "title": "Erwin Bot",
+            "author_name": "Stefano Lambiase & Andrea Cupito",
+            "author_icon": "https://api.slack.com/img/api/homepage_custom_integrations-2x.png",
+            "image_url": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fportswigger.net%2Fdaily-swig%2Fopen-source-tool-for-bug-hunters-searches-for-leaked-secrets-in-github-commits&psig=AOvVaw1Nii2DOyCxwFmYR6Y3q7g_&ust=1612719312092000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCLjPh-Hl1e4CFQAAAAAdAAAAABAu"
         },
         {
-            "title": "More info about ErwinBot",
-            "text": {
-                "text": "<https://github.com/StefanoLambiase/ErwinBot> | Repository GitHub ",
-                "image_url": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fgithub.com%2Fgithub&psig=AOvVaw33U351Kmd0ytEMFnrPlBzn&ust=1612640157398000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCLDZu_C-0-4CFQAAAAAdAAAAABAU"
-            }
+            "title": "GitHub repository",
+            "text": "https://github.com/StefanoLambiase/ErwinBot"
         },
         {
-            "title": "About us!",
-            "text": {
-                "text": "<https://github.com/StefanoLambiaseStefano> | Stefano Lambiase \n <https://github.com/ACupito> | Andrea Cupito"
-            }
+            "fallback": "Would you recommend it to customers?",
+            "title": "Would you recommend it to customers?",
+            "callback_id": "comic_1234_xyz",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "actions": [
+                {
+                    "name": "recommend",
+                    "text": "Recommend",
+                    "type": "button",
+                    "value": "recommend"
+                },
+                {
+                    "name": "no",
+                    "text": "No",
+                    "type": "button",
+                    "value": "bad"
+                }
+            ]
         }
     ]
 }
+
