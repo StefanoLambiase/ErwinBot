@@ -37,7 +37,6 @@ const {
     InfoDialog
 } = require('./infoDialogs/infoDialog');
 
-
 // Dialogs names
 const MAIN_DIALOG = 'MAIN_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
@@ -129,7 +128,7 @@ class MainDialog extends ComponentDialog {
         // Part to select the dialogs.
         if (specifiedOption === 'slack') {
             return await step.beginDialog(SCRUM_DIALOG);
-        }if (specifiedOption === 'info') {
+        } else if (specifiedOption === 'info') {
             return await step.beginDialog(INFO_DIALOG);
         } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             return await step.beginDialog(TICKET_DIALOG);

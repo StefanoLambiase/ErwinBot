@@ -168,6 +168,7 @@ class TicketDialog extends ComponentDialog {
      */
     async finalChoiceStep(stepContext) {
         console.log('**TICKET DIALOG: finalChoiceStep**\n');
+
         // Get the favourite user solution to the problem.
         stepContext.values.ticketInfo.problemSolution = stepContext.result.value;
 
