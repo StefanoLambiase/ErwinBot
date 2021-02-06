@@ -10,6 +10,9 @@ class Ticket {
         this.problemSolution = problemSolution;
     }
 
+    /**
+     * Return the list of possible solutions to the problem as a formatted string.
+     */
     getPossibilitiesAsString() {
         // Create the solutions sub-string.
         let solutionsString = '';
@@ -21,6 +24,32 @@ class Ticket {
             solutionsString = solutionsString.concat('\nNo solutions');
         }
         return solutionsString;
+    }
+
+    /**
+     * Return the object informations as an HTML formatted string.
+     */
+    getAsHTMLString() {
+        // Create the solutions sub-string.
+        let solutionsString = '';
+        if (this.problemPossibilities.length > 0) {
+            solutionsString = '<ol>';
+            this.problemPossibilities.forEach((item, index) => {
+                solutionsString = solutionsString.concat('<li> ' + item + '</li>');
+            });
+            solutionsString = solutionsString.concat('</ol>');
+        } else {
+            solutionsString = solutionsString.concat('<p>    No solutions</p>');
+        }
+
+        const s = '<h2>Ticket information</h2>' +
+            '<p><strong>Team member name:</strong> ' + this.user + '</p>' +
+            '<p><strong>Problem definition:</strong> ' + this.problemDefinition + '</p>' +
+            '<p><strong>Problem cause:</strong> ' + this.problemCause + '</p>' +
+            '<p><strong>Possible solutions:</strong></p> ' + solutionsString +
+            '<p><strong>Favourite solution:</strong> ' + this.problemSolution + '</p>';
+
+        return s;
     }
 
     toString() {

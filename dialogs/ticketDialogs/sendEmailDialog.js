@@ -10,6 +10,9 @@ const {
     LuisRecognizer
 } = require('botbuilder-ai');
 
+// Import models
+const { Ticket } = require('./model/ticket');
+
 // Imports for mailsender.
 const mailSender = require('../../utils/sendEmail');
 
@@ -80,19 +83,37 @@ class SendEmailDialog extends ComponentDialog {
         let reply = '';
         const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (emailInserted.match(regexEmail)) {
+            // Inform the usert that the inserted email is correct and that the mail will be send.
             reply = 'I\'ll send an email to ' + emailInserted;
             await stepContext.context.sendActivities([
                 { type: 'message', text: reply }
             ]);
 
             // Create the mail to send.
-            const ticketInfo = stepContext.values.ticketInfo;
+            const introHTMLString = '<h1>Problem ticket opened</h1>' +
+                '<p>Boss, one of our team members has a problem!</p>' +
+                '<p>Your attention is required<!/p>' +
+                '<p>Below I give you the details of the problem.</p>';
 
+            const ticketInfo = stepContext.values.ticketInfo;
+            const ticket = new Ticket(
+                ticketInfo.user,
+                ticketInfo.problemDefinition,
+                ticketInfo.problemCause,
+                ticketInfo.problemPossibilities,
+                ticketInfo.problemSolution
+            );
+            const ticketAsHTMLString = ticket.getAsHTMLString();
+
+            const emailHTMLText = introHTMLString.concat(ticketAsHTMLString);
+            console.log(emailHTMLText);
+
+            // Send the mail.
             mailSender.sendEmail(
                 ticketInfo.user,
                 emailInserted,
                 'Problem ticket by ' + ticketInfo.user,
-                '<h1>Have the most fun you can in a car!</h1><p>Get your <b>Tesla</b> today!</p>'
+                emailHTMLText
             );
 
             // Return to the parent dialog.
