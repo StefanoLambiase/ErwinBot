@@ -5,9 +5,13 @@ const {
     WaterfallDialog
 } = require('botbuilder-dialogs');
 
+// Imports for Language Understanding.
 const {
     LuisRecognizer
 } = require('botbuilder-ai');
+
+// Imports for mailsender.
+const mailSender = require('../../utils/sendEmail');
 
 // Dialogs names.
 const SEND_EMAIL_DIALOG = 'SEND_EMAIL_DIALOG';
@@ -81,11 +85,23 @@ class SendEmailDialog extends ComponentDialog {
                 { type: 'message', text: reply }
             ]);
 
+            // Create the mail to send.
+            const ticketInfo = stepContext.values.ticketInfo;
+
+            mailSender.sendEmail(
+                ticketInfo.user,
+                emailInserted,
+                'Problem ticket by ' + ticketInfo.user,
+                '<h1>Have the most fun you can in a car!</h1><p>Get your <b>Tesla</b> today!</p>'
+            );
+
+            // Return to the parent dialog.
             return await stepContext.endDialog(emailInserted);
         } else {
             reply = 'The email inserted doesn\'t match the email format. Please retry.';
             await stepContext.context.sendActivity(reply);
 
+            // Repeat the dialog from the beginning.
             return await stepContext.replaceDialog(SEND_EMAIL_DIALOG, stepContext.values.ticketInfo);
         }
     }
