@@ -32,6 +32,12 @@ const {
     ScrumDialog
 } = require('./scrumDialogs/scrumDialog');
 
+const {
+    INFO_DIALOG,
+    InfoDialog
+} = require('./infoDialogs/infoDialog');
+
+
 // Dialogs names
 const MAIN_DIALOG = 'MAIN_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
@@ -55,6 +61,7 @@ class MainDialog extends ComponentDialog {
         this.addDialog(new TextPrompt(TEXT_PROMPT));
 
         this.addDialog(new ScrumDialog());
+        this.addDialog(new InfoDialog());
         this.addDialog(new TicketDialog(luisRecognizer, userState));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
@@ -122,6 +129,8 @@ class MainDialog extends ComponentDialog {
         // Part to select the dialogs.
         if (specifiedOption === 'slack') {
             return await step.beginDialog(SCRUM_DIALOG);
+        }if (specifiedOption === 'info') {
+            return await step.beginDialog(INFO_DIALOG);
         } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             return await step.beginDialog(TICKET_DIALOG);
         } else {
