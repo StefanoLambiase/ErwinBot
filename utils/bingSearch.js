@@ -8,8 +8,14 @@ if (!SUBSCRIPTION_KEY) {
     throw new Error('AZURE_SUBSCRIPTION_KEY is not set.');
 }
 
+/**
+ * Implements the functionality that search websites based on a query.
+ * @param {string} query - The string used to search.
+ * @param {boolean} onStackoverflow - Indicates if the search must be done on StackOverflow.
+ */
 function bingWebSearch(query, onStackoverflow) {
     // Sets default query params.
+    // Checks if the search must be done on StackOverflow.
     let siteOperator = '';
     if (onStackoverflow) {
         siteOperator = '+site%3Astackoverflow.com';
@@ -31,8 +37,12 @@ function bingWebSearch(query, onStackoverflow) {
                     console.log(header + ': ' + res.headers[header]);
                 }
             }
+
+            // Return an object in JSON form.
+            const responseAsJSON = JSON.parse(body);
             console.log('\nJSON Response:\n');
-            console.dir(JSON.parse(body), { colors: false, depth: null });
+            console.dir(responseAsJSON, { colors: false, depth: null });
+            return responseAsJSON;
         });
         res.on('error', e => {
             console.log('Error: ' + e.message);
