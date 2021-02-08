@@ -158,11 +158,12 @@ class TicketDialog extends ComponentDialog {
                 // Create a Template instance from the template payload
                 const template = new ACData.Template(searchResultTicketCard);
 
+                const cardTitle = index + '. ' + item.name;
                 const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
 
                 const card = template.expand({
                     $root: {
-                        title: item.name,
+                        title: cardTitle,
                         lastCrawled: date.toString(),
                         language: item.language,
                         linkToTheSite: item.url,
