@@ -101,10 +101,12 @@ class ScrumDialog extends ComponentDialog {
                 {type:"message", text:"Nice we have done, i'll sent those questions to your teammates."},
                 {type:"message", text:"I'm glad to help you, have a nice day! :D"}
             ]);
+
+            // Function to sent private messages in slack channels
             try{
                 await client.chat.postMessage({
                     token: "xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",
-                    channel: "C01JVNWH1GS",
+                    channel: "D01K1USAYJY",
                     text: "hi stefano"
                 });
             }catch(error){
@@ -113,6 +115,7 @@ class ScrumDialog extends ComponentDialog {
             return await step.context.sendActivities([
                 {type:"message", text:"Questions sent, bye bye!"}
             ]);
+
         } else if(userResponse == 'no'){
             await step.context.sendActivities([
                 {type:"message", text:"Ok, now you have to define your own questions."},
