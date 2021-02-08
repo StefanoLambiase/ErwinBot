@@ -1,4 +1,9 @@
 // Import required types from libraries
+const { ActivityTypes, CardFactory } = require('botbuilder');
+
+// Import for Adaptive Card templating.
+const ACData = require('adaptivecards-templating');
+
 const {
     TextPrompt,
     ChoicePrompt,
@@ -18,12 +23,16 @@ const { Ticket } = require('./model/ticket');
 // Import others dialogs
 const { PossibilitiesDialog, POSSIBILITIES_DIALOG } = require('./possiblitiesDialog');
 const { SendEmailDialog, SEND_EMAIL_DIALOG } = require('./sendEmailDialog');
+const { BingSearchDialog, BING_SEARCH_DIALOG } = require('../bingSearchDialogs/bingSearchDialog');
 
 // Dialogs names
 const TICKET_DIALOG = 'TICKET_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
+
+const searchResultTicketCard = require('../../botResources/adaptiveCardStructures/searchResultTicketCard.json');
+const moment = require('moment');
 
 /**
  * Implements the functionality used to open a problem ticket.
@@ -40,12 +49,15 @@ class TicketDialog extends ComponentDialog {
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
+        this.addDialog(new BingSearchDialog());
         this.addDialog(new PossibilitiesDialog(luisRecognizer));
         this.addDialog(new SendEmailDialog(luisRecognizer));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
             this.definitionStep.bind(this),
+            this.bingSearchStep.bind(this),
+            this.askToContinueAfterSearchStep.bind(this),
             this.causeStep.bind(this),
             this.possibilitiesStep.bind(this),
             this.solutionStep.bind(this),
@@ -98,11 +110,81 @@ class TicketDialog extends ComponentDialog {
         console.log('**TICKET DIALOG: definitionStep**\n');
         // Insert user name in the ticket info
         stepContext.values.ticketInfo.user = stepContext.result;
-        console.log(stepContext.result);
 
         const message = 'What is the problem?';
         return await stepContext.prompt(TEXT_PROMPT, {
             prompt: message
+        });
+    }
+
+    /**
+     * Implement the interaction that show to the user links to possible solutions and asks if the problem have been resolved.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
+    async bingSearchStep(stepContext) {
+        console.log('**TICKET DIALOG: bingSearchStep**\n');
+        // Insert the problem definition in the ticket info
+        stepContext.values.ticketInfo.problemDefinition = stepContext.result;
+        console.log(stepContext.values.ticketInfo.problemDefinition);
+
+        await stepContext.context.sendActivity('Before continue, I\'m going to do a fast search on Bing about your problem!');
+
+        // Call the dialog used to insert the possible solutions to the problem.
+        return await stepContext.beginDialog(BING_SEARCH_DIALOG, stepContext.values.ticketInfo.problemDefinition);
+    }
+
+    /**
+     * Implements the interaction that show the user the bing search result and ask to continue the ticket.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
+    async askToContinueAfterSearchStep(stepContext) {
+        console.log('**TICKET DIALOG: askToContinueAfterSearchStep**\n');
+
+        // Prints informations from bing search.
+        const responseAsJSON = stepContext.result;
+        if (responseAsJSON === '') {
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'I have done a fast search on Bing about your problem.' },
+                { type: 'message', text: 'Unfortunately, I have not found anything. 😥' }
+            ]);
+        } else {
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'I have done a fast search on Bing about your problem.' },
+                { type: 'message', text: 'These are the informations that I have found! 😀' }
+            ]);
+
+            // Send the informations as adaptive cards.
+            responseAsJSON.webPages.value.forEach((item, index) => {
+                // Create a Template instance from the template payload
+                const template = new ACData.Template(searchResultTicketCard);
+
+                const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
+
+                const card = template.expand({
+                    $root: {
+                        title: item.name,
+                        lastCrawled: date.toString(),
+                        language: item.language,
+                        linkToTheSite: item.url,
+                        snippet: item.snippet
+                    }
+                });
+
+                const cardMessage = { type: ActivityTypes.Message };
+                cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+
+                stepContext.context.sendActivity(cardMessage);
+            });
+        }
+
+        // Create the list of options to choose from.
+        const options = ['Yes', 'No'];
+        const message = 'Have you solved your problem?';
+        // Prompt the user for a choice.
+        return await stepContext.prompt(CHOICE_PROMPT, {
+            prompt: message,
+            retryPrompt: 'Please choose an option from the list.',
+            choices: options
         });
     }
 
@@ -112,13 +194,17 @@ class TicketDialog extends ComponentDialog {
      */
     async causeStep(stepContext) {
         console.log('**TICKET DIALOG: causeStep**\n');
-        // Insert the problem definition in the ticket info
-        stepContext.values.ticketInfo.problemDefinition = stepContext.result;
+        // Gets the user choiche.
+        const userChoice = stepContext.result.value;
 
-        const message = 'What is the cause of the problem?';
-        return await stepContext.prompt(TEXT_PROMPT, {
-            prompt: message
-        });
+        if (userChoice === 'Yes') {
+            return await stepContext.endDialog();
+        } else {
+            const message = 'What is the cause of the problem?';
+            return await stepContext.prompt(TEXT_PROMPT, {
+                prompt: message
+            });
+        }
     }
 
     /**
