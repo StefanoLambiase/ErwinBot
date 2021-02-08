@@ -1,4 +1,9 @@
 // Import required types from libraries
+const { ActivityTypes, CardFactory } = require('botbuilder');
+
+// Import for Adaptive Card templating.
+const ACData = require('adaptivecards-templating');
+
 const {
     TextPrompt,
     ChoicePrompt,
@@ -25,6 +30,9 @@ const TICKET_DIALOG = 'TICKET_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
+
+const searchResultTicketCard = require('../../botResources/adaptiveCardStructures/searchResultTicketCard.json');
+const moment = require('moment');
 
 /**
  * Implements the functionality used to open a problem ticket.
@@ -119,14 +127,55 @@ class TicketDialog extends ComponentDialog {
         stepContext.values.ticketInfo.problemDefinition = stepContext.result;
         console.log(stepContext.values.ticketInfo.problemDefinition);
 
+        await stepContext.context.sendActivity('Before continue, I\'m going to do a fast search on Bing about your problem!');
+
         // Call the dialog used to insert the possible solutions to the problem.
         return await stepContext.beginDialog(BING_SEARCH_DIALOG, stepContext.values.ticketInfo.problemDefinition);
     }
 
+    /**
+     * Implements the interaction that show the user the bing search result and ask to continue the ticket.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async askToContinueAfterSearchStep(stepContext) {
         console.log('**TICKET DIALOG: askToContinueAfterSearchStep**\n');
 
+        // Prints informations from bing search.
         const responseAsJSON = stepContext.result;
+        if (responseAsJSON === '') {
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'I have done a fast search on Bing about your problem.' },
+                { type: 'message', text: 'Unfortunately, I have not found anything. 😥' }
+            ]);
+        } else {
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'I have done a fast search on Bing about your problem.' },
+                { type: 'message', text: 'These are the informations that I have found! 😀' }
+            ]);
+
+            // Send the informations as adaptive cards.
+            responseAsJSON.webPages.value.forEach((item, index) => {
+                // Create a Template instance from the template payload
+                const template = new ACData.Template(searchResultTicketCard);
+
+                const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
+
+                const card = template.expand({
+                    $root: {
+                        title: item.name,
+                        lastCrawled: date.toString(),
+                        language: item.language,
+                        linkToTheSite: item.url,
+                        snippet: item.snippet
+                    }
+                });
+
+                const cardMessage = { type: ActivityTypes.Message };
+                cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+
+                stepContext.context.sendActivity(cardMessage);
+            });
+        }
 
         // Create the list of options to choose from.
         const options = ['Yes', 'No'];

@@ -46,20 +46,21 @@ class BingSearchDialog extends ComponentDialog {
     }
 
     async finalStep(stepContext) {
-        console.log('**BING SEARCH DIALOG: finalStep**\n');
+        console.log('**BING SEARCH DIALOG: finalStep 1**\n');
 
         // Get the favourite user solution to the problem.
         const userOption = stepContext.result.value;
 
+        // Does the call to the http bing search api.
         let responseAsJSON = '';
         if (userOption === 'Yes') {
-            responseAsJSON = await bingSearch.bingWebSearch(stepContext.values.queryForBing, true);
+            responseAsJSON = await bingSearch.bingWebSearch(stepContext.values.queryForBing, 3, true);
         } else {
-            responseAsJSON = await bingSearch.bingWebSearch(stepContext.values.queryForBing, false);
+            responseAsJSON = await bingSearch.bingWebSearch(stepContext.values.queryForBing, 3, false);
         }
 
-        console.log('SONO IL DIALOG');
-        console.log(responseAsJSON.webPages.value[0]);
+        // Print the result and return it.
+        console.log('**BING SEARCH DIALOG: finalStep 2**\n');
 
         return await stepContext.endDialog(responseAsJSON);
     }

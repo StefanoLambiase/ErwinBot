@@ -11,9 +11,10 @@ if (!SUBSCRIPTION_KEY) {
 /**
  * Implements the functionality that search websites based on a query.
  * @param {string} query - The string used to search.
+ * @param {number} numOfResults - The maximum number of returned results.
  * @param {boolean} onStackoverflow - Indicates if the search must be done on StackOverflow.
  */
-function executeBingSearchAsPromise(query, onStackoverflow) {
+function executeBingSearchAsPromise(query, numOfResults, onStackoverflow) {
     // Sets default query params.
     // Checks if the search must be done on StackOverflow.
     let siteOperator = '';
@@ -21,7 +22,7 @@ function executeBingSearchAsPromise(query, onStackoverflow) {
         siteOperator = '+site%3Astackoverflow.com';
     }
     const responseFilterParam = '&responseFilter=webpages';
-    const answerCountParam = '&answerCount=7';
+    const answerCountParam = '&answerCount=' + numOfResults;
 
     return new Promise((resolve, reject) => {
         // Does the call.
@@ -63,9 +64,9 @@ function executeBingSearchAsPromise(query, onStackoverflow) {
 /**
  * Implements an async function to make http request.
  */
-async function bingWebSearch(query, onStackoverflow) {
+async function bingWebSearch(query, numOfResults, onStackoverflow) {
     try {
-        const httpPromise = executeBingSearchAsPromise(query, onStackoverflow);
+        const httpPromise = executeBingSearchAsPromise(query, numOfResults, onStackoverflow);
         const responseBody = await httpPromise;
 
         return responseBody;
