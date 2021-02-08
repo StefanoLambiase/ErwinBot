@@ -134,7 +134,7 @@ class MainDialog extends ComponentDialog {
             return await step.beginDialog(SCRUM_DIALOG);
         } else if (specifiedOption === 'bing') {
             const query = 'Microsoft Cognitive Services';
-            bingSearch.bingWebSearch(query);
+            bingSearch.bingWebSearch(query, true);
         } else if (specifiedOption === 'info') {
             return await step.beginDialog(INFO_DIALOG);
         } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {

@@ -8,10 +8,19 @@ if (!SUBSCRIPTION_KEY) {
     throw new Error('AZURE_SUBSCRIPTION_KEY is not set.');
 }
 
-function bingWebSearch(query) {
+function bingWebSearch(query, onStackoverflow) {
+    // Sets default query params.
+    let siteOperator = '';
+    if (onStackoverflow) {
+        siteOperator = '+site%3Astackoverflow.com';
+    }
+    const responseFilterParam = '&responseFilter=webpages';
+    const answerCountParam = '&answerCount=7';
+
+    // Does the call.
     https.get({
         hostname: process.env.BingSearchEndpoint,
-        path: 'v7.0/search?q=' + encodeURIComponent(query),
+        path: '/v7.0/search?q=' + encodeURIComponent(query) + siteOperator + responseFilterParam + answerCountParam,
         headers: { 'Ocp-Apim-Subscription-Key': SUBSCRIPTION_KEY }
     }, res => {
         let body = '';
