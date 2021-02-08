@@ -1,6 +1,10 @@
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
 const { WebClient, LogLevel } = require('@slack/web-api');
 
+
+const bingSearch = require('../utils/bingSearch');
+
+
 // Import required types from libraries
 const {
     ActivityTypes,
@@ -128,6 +132,9 @@ class MainDialog extends ComponentDialog {
         // Part to select the dialogs.
         if (specifiedOption === 'slack') {
             return await step.beginDialog(SCRUM_DIALOG);
+        } else if (specifiedOption === 'bing') {
+            const query = 'Microsoft Cognitive Services';
+            bingSearch.bingWebSearch(query);
         } else if (specifiedOption === 'info') {
             return await step.beginDialog(INFO_DIALOG);
         } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
