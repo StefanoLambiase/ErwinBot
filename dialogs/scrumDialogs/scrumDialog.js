@@ -96,18 +96,19 @@ class ScrumDialog extends ComponentDialog {
     async defineQuestionStep(step) {
         const userResponse = step.result;
 
+
         if(userResponse == 'yes'){
             await step.context.sendActivities([
                 {type:"message", text:"Nice we have done, i'll sent those questions to your teammates."},
                 {type:"message", text:"I'm glad to help you, have a nice day! :D"}
-            ])
+            ]);
+            await app.client.chat.postMessage({
+                token: "xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",
+                channel: "C01JVNWH1GS",
+                text: "hi stefano"
+            });
             return await step.context.sendActivities([
-                { 
-                    channelData:{
-                        channel: "C01JVNWH1GS",
-                        text: "Hi stefano" 
-                    } 
-                }
+                {type:"message", text:"Questions sent, bye bye!"}
             ])
         } else if(userResponse == 'no'){
             await step.context.sendActivities([
