@@ -1,3 +1,5 @@
+const { WebClient, LogLevel } = require('@slack/web-api');
+
 // Import required types from libraries
 const {
     ActivityTypes,
@@ -13,15 +15,20 @@ const {
     WaterfallDialog
 } = require('botbuilder-dialogs');
 
-// Imports for Slack
-const SampleFidelityMessage = require('../../botResources/slack/SampleFidelityMessage.json');
-const DatepickerSlack = require('../../botResources/slack/DatepickerSlack.json');
-const TimepickerSlack = require('../../botResources/slack/TimepickerSlack.json');
+// Import for other dialogs
+const {
+    QUESTIONS_DEFINITION_DIALOG,
+    QuestionsDefinitionDialog
+} = require('./questionsDefinitionDialog');
 
 // Dialogs names
 const SCRUM_DIALOG = 'SCRUM_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
+
+const client = new WebClient("xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",{
+    logLevel: LogLevel.DEBUG
+})
 
 class ScrumDialog extends ComponentDialog {
     constructor(userState) {
@@ -29,10 +36,12 @@ class ScrumDialog extends ComponentDialog {
 
         // Adding used dialogs
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+        this.addDialog(new QuestionsDefinitionDialog());
+
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-            this.dateStep.bind(this),
-            this.timeStep.bind(this),
-            this.questionStep.bind(this)
+            this.dailyScrumInitialStep.bind(this),
+            this.defaultQuestionStep.bind(this),
+            this.defineQuestionStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -53,25 +62,60 @@ class ScrumDialog extends ComponentDialog {
         }
     }
 
-    async dateStep(step) {
-        return await step.context.sendActivities([
-            { type: 'message', text: 'Set up you daily scrum' },
-            { channelData: SampleFidelityMessage }
-        ]);
+    async dailyScrumInitialStep(step) {
+        await step.context.sendActivities([
+            {type:"message", text:"Hi, i'm here to help you!"},
+            {type:"message", text:"I'll guide you through the definition of you daily scrum's questions"},
+            {type:"message", text:"The questions you will define, will be sent via brodcast messages to every teammates."}
+        ])
+        return await step.prompt(TEXT_PROMPT, {
+            prompt: "Just to be more informal, type your name here :D"
+        })
     }
 
-    async timeStep(step) {
-        return await step.context.sendActivities([
-            { type: 'message', text: 'Set up you daily scrum 2' },
-            { channelData: DatepickerSlack }
-        ]);
+    async defaultQuestionStep(step) {
+        const userName = step.result;
+        const questionOne = "1. How do you feel today?";
+        const questionTwo = "2. What did you do since yesterday?";
+        const questionThree = "3. What will you do today?";
+        const questionFour = "4. Anything blocking your progress?";
+
+        await step.context.sendActivities([
+            {type:"message", text:"So" + userName + ", we need to definde the questions that would be sent to your teammates."},
+            {type:"message", text:"In order to ease you work i've prepared some default questions that you can use"},
+            {type:"message", text: questionOne},
+            {type:"message", text: questionTwo},
+            {type:"message", text: questionThree},
+            {type:"message", text: questionFour}
+        ])
+        return await step.prompt(TEXT_PROMPT, {
+            prompt: "Do you want to use these for you daily scrum?"
+        })
     }
 
-    async questionStep(step) {
-        return await step.context.sendActivities([
-            { type: 'message', text: 'Set up you daily scrum 3' },
-            { channelData: DatepickerSlack }
-        ]);
+    async defineQuestionStep(step) {
+        const userResponse = step.result;
+
+        if(userResponse == 'yes'){
+            await step.context.sendActivities([
+                {type:"message", text:"Nice we have done, i'll sent those questions to your teammates."},
+                {type:"message", text:"I'm glad to help you, have a nice day! :D"}
+            ])
+            return await step.context.sendActivities([
+                { 
+                    "channelData":{
+                        "channel": "01K1USAYJY",
+                        "text": "Hi stefano" 
+                    } 
+                }
+            ])
+        } else if(userResponse == 'no'){
+            await step.context.sendActivities([
+                {type:"message", text:"Ok, now you have to define your own questions."},
+                {type:"message", text:"Let's start with the first one, we'll proceed one question at a time"}
+            ])
+            return await step.beginDialog(QUESTIONS_DEFINITION_DIALOG);
+        }
     }
 }
 
