@@ -104,8 +104,8 @@ class ScrumDialog extends ComponentDialog {
             return await step.context.sendActivities([
                 { 
                     channelData:{
-                        "channel": "C01JVNWH1GS",
-                        "text": "Hi stefano" 
+                        channel: "C01JVNWH1GS",
+                        text: "Hi stefano" 
                     } 
                 }
             ])
