@@ -18,6 +18,7 @@ const { Ticket } = require('./model/ticket');
 // Import others dialogs
 const { PossibilitiesDialog, POSSIBILITIES_DIALOG } = require('./possiblitiesDialog');
 const { SendEmailDialog, SEND_EMAIL_DIALOG } = require('./sendEmailDialog');
+const { BingSearchDialog, BING_SEARCH_DIALOG } = require('../bingSearchDialogs/bingSearchDialog');
 
 // Dialogs names
 const TICKET_DIALOG = 'TICKET_DIALOG';
@@ -40,12 +41,15 @@ class TicketDialog extends ComponentDialog {
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
+        this.addDialog(new BingSearchDialog());
         this.addDialog(new PossibilitiesDialog(luisRecognizer));
         this.addDialog(new SendEmailDialog(luisRecognizer));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
             this.definitionStep.bind(this),
+            this.bingSearchStep.bind(this),
+            this.askToContinueAfterSearchStep.bind(this),
             this.causeStep.bind(this),
             this.possibilitiesStep.bind(this),
             this.solutionStep.bind(this),
@@ -98,11 +102,40 @@ class TicketDialog extends ComponentDialog {
         console.log('**TICKET DIALOG: definitionStep**\n');
         // Insert user name in the ticket info
         stepContext.values.ticketInfo.user = stepContext.result;
-        console.log(stepContext.result);
 
         const message = 'What is the problem?';
         return await stepContext.prompt(TEXT_PROMPT, {
             prompt: message
+        });
+    }
+
+    /**
+     * Implement the interaction that show to the user links to possible solutions and asks if the problem have been resolved.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
+    async bingSearchStep(stepContext) {
+        console.log('**TICKET DIALOG: bingSearchStep**\n');
+        // Insert the problem definition in the ticket info
+        stepContext.values.ticketInfo.problemDefinition = stepContext.result;
+        console.log(stepContext.values.ticketInfo.problemDefinition);
+
+        // Call the dialog used to insert the possible solutions to the problem.
+        return await stepContext.beginDialog(BING_SEARCH_DIALOG, stepContext.values.ticketInfo.problemDefinition);
+    }
+
+    async askToContinueAfterSearchStep(stepContext) {
+        console.log('**TICKET DIALOG: askToContinueAfterSearchStep**\n');
+
+        const responseAsJSON = stepContext.result;
+
+        // Create the list of options to choose from.
+        const options = ['Yes', 'No'];
+        const message = 'Have you solved your problem?';
+        // Prompt the user for a choice.
+        return await stepContext.prompt(CHOICE_PROMPT, {
+            prompt: message,
+            retryPrompt: 'Please choose an option from the list.',
+            choices: options
         });
     }
 
@@ -112,13 +145,17 @@ class TicketDialog extends ComponentDialog {
      */
     async causeStep(stepContext) {
         console.log('**TICKET DIALOG: causeStep**\n');
-        // Insert the problem definition in the ticket info
-        stepContext.values.ticketInfo.problemDefinition = stepContext.result;
+        // Gets the user choiche.
+        const userChoice = stepContext.result.value;
 
-        const message = 'What is the cause of the problem?';
-        return await stepContext.prompt(TEXT_PROMPT, {
-            prompt: message
-        });
+        if (userChoice === 'Yes') {
+            return await stepContext.endDialog();
+        } else {
+            const message = 'What is the cause of the problem?';
+            return await stepContext.prompt(TEXT_PROMPT, {
+                prompt: message
+            });
+        }
     }
 
     /**
