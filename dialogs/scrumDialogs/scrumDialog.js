@@ -26,10 +26,6 @@ const SCRUM_DIALOG = 'SCRUM_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
-const client = new WebClient("xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",{
-    logLevel: LogLevel.DEBUG
-})
-
 class ScrumDialog extends ComponentDialog {
     constructor(userState) {
         super(SCRUM_DIALOG);
@@ -95,26 +91,33 @@ class ScrumDialog extends ComponentDialog {
 
     async defineQuestionStep(step) {
         const userResponse = step.result;
-
+        
+        const client = new WebClient("xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",{
+            logLevel: LogLevel.DEBUG
+        })
 
         if(userResponse == 'yes'){
             await step.context.sendActivities([
                 {type:"message", text:"Nice we have done, i'll sent those questions to your teammates."},
                 {type:"message", text:"I'm glad to help you, have a nice day! :D"}
             ]);
-            await app.client.chat.postMessage({
-                token: "xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",
-                channel: "C01JVNWH1GS",
-                text: "hi stefano"
-            });
+            try{
+                await client.chat.postMessage({
+                    token: "xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",
+                    channel: "C01JVNWH1GS",
+                    text: "hi stefano"
+                });
+            }catch(error){
+                console.error(error);
+            }
             return await step.context.sendActivities([
                 {type:"message", text:"Questions sent, bye bye!"}
-            ])
+            ]);
         } else if(userResponse == 'no'){
             await step.context.sendActivities([
                 {type:"message", text:"Ok, now you have to define your own questions."},
                 {type:"message", text:"Let's start with the first one, we'll proceed one question at a time"}
-            ])
+            ]);
             return await step.beginDialog(QUESTIONS_DEFINITION_DIALOG);
         }
     }
