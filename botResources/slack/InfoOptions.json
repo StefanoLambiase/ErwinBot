@@ -12,6 +12,10 @@
             "text": "https://github.com/StefanoLambiase/ErwinBot"
         },
         {
+            "title": "Contact us on Linkedin",
+            "text": "Andrea Cupito: https://www.linkedin.com/in/andrea-cupito-52a43b189/ \n Stefano Lambiase: https://www.linkedin.com/in/stefano-lambiase/"
+        },
+        {
             "fallback": "Would you recommend it to customers?",
             "title": "Would you recommend it to customers?",
             "callback_id": "comic_1234_xyz",
@@ -31,10 +35,6 @@
                     "value": "bad"
                 }
             ]
-        },
-        {
-            "title": "Contact us on Linkedin",
-            "text": "Andrea Cupito: https://www.linkedin.com/in/andrea-cupito-52a43b189/ \n Stefano Lambiase: https://www.linkedin.com/in/stefano-lambiase/"
         }
     ]
 }
