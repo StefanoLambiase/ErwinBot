@@ -13,7 +13,7 @@ if (!SUBSCRIPTION_KEY) {
  * @param {string} query - The string used to search.
  * @param {boolean} onStackoverflow - Indicates if the search must be done on StackOverflow.
  */
-function bingWebSearch(query, onStackoverflow) {
+function executeBingSearchAsPromise(query, onStackoverflow) {
     // Sets default query params.
     // Checks if the search must be done on StackOverflow.
     let siteOperator = '';
@@ -23,32 +23,55 @@ function bingWebSearch(query, onStackoverflow) {
     const responseFilterParam = '&responseFilter=webpages';
     const answerCountParam = '&answerCount=7';
 
-    // Does the call.
-    https.get({
-        hostname: process.env.BingSearchEndpoint,
-        path: '/v7.0/search?q=' + encodeURIComponent(query) + siteOperator + responseFilterParam + answerCountParam,
-        headers: { 'Ocp-Apim-Subscription-Key': SUBSCRIPTION_KEY }
-    }, res => {
-        let body = '';
-        res.on('data', part => body += part);
-        res.on('end', () => {
-            for (var header in res.headers) {
-                if (header.startsWith('bingapis-') || header.startsWith('x-msedge-')) {
-                    console.log(header + ': ' + res.headers[header]);
-                }
-            }
+    return new Promise((resolve, reject) => {
+        // Does the call.
+        https.get(
+            {
+                hostname: process.env.BingSearchEndpoint,
+                path: '/v7.0/search?q=' + encodeURIComponent(query) + siteOperator + responseFilterParam + answerCountParam,
+                headers: { 'Ocp-Apim-Subscription-Key': SUBSCRIPTION_KEY }
+            },
+            response => {
+                let body = '';
 
-            // Return an object in JSON form.
-            const responseAsJSON = JSON.parse(body);
-            console.log('\nJSON Response:\n');
-            console.dir(responseAsJSON, { colors: false, depth: null });
-            return responseAsJSON;
-        });
-        res.on('error', e => {
-            console.log('Error: ' + e.message);
-            throw e;
-        });
+                response.on('data', part => { body += part; });
+
+                response.on('end', () => {
+                    for (var header in response.headers) {
+                        if (header.startsWith('bingapis-') || header.startsWith('x-msedge-')) {
+                            console.log(header + ': ' + response.headers[header]);
+                        }
+                    }
+
+                    // Return an object in JSON form.
+                    const responseAsJSON = JSON.parse(body);
+                    console.log('\nJSON Response:\n');
+                    console.dir(responseAsJSON, { colors: false, depth: null });
+
+                    resolve(responseAsJSON);
+                });
+
+                response.on('error', error => {
+                    console.log('Error: ' + error.message);
+                    reject(error);
+                });
+            }
+        );
     });
+}
+
+/**
+ * Implements an async function to make http request.
+ */
+async function bingWebSearch(query, onStackoverflow) {
+    try {
+        const httpPromise = executeBingSearchAsPromise(query, onStackoverflow);
+        const responseBody = await httpPromise;
+
+        return responseBody;
+    } catch {
+        return '';
+    }
 }
 
 module.exports = { bingWebSearch };

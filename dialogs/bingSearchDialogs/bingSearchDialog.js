@@ -53,12 +53,13 @@ class BingSearchDialog extends ComponentDialog {
 
         let responseAsJSON = '';
         if (userOption === 'Yes') {
-            responseAsJSON = bingSearch.bingWebSearch(stepContext.values.queryForBing, true);
+            responseAsJSON = await bingSearch.bingWebSearch(stepContext.values.queryForBing, true);
         } else {
-            responseAsJSON = bingSearch.bingWebSearch(stepContext.values.queryForBing, false);
+            responseAsJSON = await bingSearch.bingWebSearch(stepContext.values.queryForBing, false);
         }
 
-        console.log(responseAsJSON);
+        console.log('SONO IL DIALOG');
+        console.log(responseAsJSON.webPages.value[0]);
 
         return await stepContext.endDialog(responseAsJSON);
     }
