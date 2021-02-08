@@ -92,7 +92,7 @@ class ScrumDialog extends ComponentDialog {
     async defineQuestionStep(step) {
         const userResponse = step.result;
         
-        const client = new WebClient("xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",{
+        const client = new WebClient(process.env.SlackUserAccessToken,{
             logLevel: LogLevel.DEBUG
         })
 
@@ -105,8 +105,8 @@ class ScrumDialog extends ComponentDialog {
             // Function to sent private messages in slack channels
             try{
                 await client.chat.postMessage({
-                    token: "xoxb-1647940083028-1627029901863-zugYhdUjXZRXSf1IPZrHDnDI",
-                    channel: "D01K1USAYJY",
+                    token: process.env.SlackUserAccessToken,
+                    channel: "C01JVNWH1GS",
                     text: "hi stefano"
                 });
             }catch(error){
