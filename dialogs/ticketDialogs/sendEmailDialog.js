@@ -116,6 +116,7 @@ class SendEmailDialog extends ComponentDialog {
                 emailHTMLText
             );
 
+            await stepContext.context.sendActivity('Perfect! The interaction to send an email **ends** here!!!');
             // Return to the parent dialog.
             return await stepContext.endDialog(emailInserted);
         } else {

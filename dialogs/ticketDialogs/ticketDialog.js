@@ -61,8 +61,9 @@ class TicketDialog extends ComponentDialog {
             this.causeStep.bind(this),
             this.possibilitiesStep.bind(this),
             this.solutionStep.bind(this),
+            this.informationAndSendEmailStep.bind(this),
             this.finalChoiceStep.bind(this),
-            this.finalStep.bind(this)
+            this.closingStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -154,7 +155,7 @@ class TicketDialog extends ComponentDialog {
             ]);
 
             // Send the informations as adaptive cards.
-            responseAsJSON.webPages.value.forEach(async (item, index) => {
+            await responseAsJSON.webPages.value.forEach(async (item, index) => {
                 // On Slack we can't use the adaptive card, so we need a check.
                 if (stepContext.context.activity.channelId === 'slack') {
                     await stepContext.context.sendActivity('Sorry, this feature hasn\'t been implementing yet.');
@@ -259,8 +260,8 @@ class TicketDialog extends ComponentDialog {
      * Implements the interaction that asks the user to choice between send a ticket to the PM or close the ticket.
      * @param {*} stepContext - The context from previous interactions with the user.
      */
-    async finalChoiceStep(stepContext) {
-        console.log('**TICKET DIALOG: finalChoiceStep**\n');
+    async informationAndSendEmailStep(stepContext) {
+        console.log('**TICKET DIALOG: informationAndSendEmailStep**\n');
 
         // Get the favourite user solution to the problem.
         stepContext.values.ticketInfo.problemSolution = stepContext.result.value;
@@ -334,14 +335,14 @@ class TicketDialog extends ComponentDialog {
      * Implements the final user decision about the ticket. Send it or avoid.
      * @param {*} stepContext - The context from previous interactions with the user.
      */
-    async finalStep(stepContext) {
-        console.log('**TICKET DIALOG: finalStep**\n');
+    async finalChoiceStep(stepContext) {
+        console.log('**TICKET DIALOG: finalChoiceStep**\n');
 
         const userInput = stepContext.result.value;
         if (userInput === 'done') {
             console.log('Well done');
             // Exit the dialog.
-            return await stepContext.endDialog();
+            return await stepContext.context.sendActivity('Well done! This means that the strategy works!!!');
         } else {
             // Create the ticket object.
             const ticketInfo = stepContext.values.ticketInfo;
@@ -352,6 +353,20 @@ class TicketDialog extends ComponentDialog {
             // Call the dialog used to insert the possible solutions to the problem.
             return await stepContext.beginDialog(SEND_EMAIL_DIALOG, ticketInfo);
         }
+    }
+
+    /**
+     * Implements the interaction closing.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
+    async closingStep(stepContext) {
+        console.log('**TICKET DIALOG: closingStep**\n');
+
+        await stepContext.context.sendActivities([
+            { type: 'message', text: 'Perfect, my job here is done! 😎' },
+            { type: 'message', text: 'Your interaction for the ticket **ends** here!' }
+        ]);
+        return await stepContext.endDialog();
     }
 }
 
