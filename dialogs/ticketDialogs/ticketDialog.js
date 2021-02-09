@@ -163,7 +163,7 @@ class TicketDialog extends ComponentDialog {
                                 attachments: [
                                     {
                                         title: 'Site name',
-                                        text: (index + 1) + '. ' + item.name
+                                        text: item.name
                                     },
                                     {
                                         fields: [
@@ -245,6 +245,11 @@ class TicketDialog extends ComponentDialog {
         const userChoice = stepContext.result.value;
 
         if (userChoice === 'Yes') {
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'Perfect, my job here is done! 😎' },
+                { type: 'message', text: 'Your interaction for the ticket **ends** here!' }
+            ]);
+
             return await stepContext.endDialog();
         } else {
             const message = 'What is the cause of the problem?';
