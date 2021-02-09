@@ -57,7 +57,7 @@ class PossibilitiesDialog extends ComponentDialog {
         if (list.length === 0) {
             message = 'Type the first solution to the problem';
         } else {
-            message = 'You have typed ' + list.length + ' options. Type \'done\' to end or an other solution to continue';
+            message = 'You have typed ' + list.length + ' options. Type \'' + this.doneOption + '\' to end or an other solution to continue';
         }
 
         return await stepContext.prompt(TEXT_PROMPT, {
@@ -77,15 +77,16 @@ class PossibilitiesDialog extends ComponentDialog {
         const userInput = stepContext.result;
 
         console.log(userInput);
-        const done = userInput === this.doneOption;
+        const done = (userInput === this.doneOption);
 
         if (!done) {
             // If the user inserts a solution, push it in the array.
             list.push(userInput);
         }
 
-        if (done && list.length > 1) {
+        if (done && list.length > 0) {
             // If they're done, exit and return their list.
+            await stepContext.context.sendActivity('We need at least one possible solution!');
             return await stepContext.endDialog(list);
         } else {
             // Otherwise, repeat this dialog, passing in the list from this iteration.
