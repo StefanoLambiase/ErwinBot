@@ -155,9 +155,8 @@ class TicketDialog extends ComponentDialog {
             ]);
 
             // Send the informations as adaptive cards using a forEach loop.
-            await responseAsJSON.webPages.value.forEach(async (item, index) => {
-                // On Slack we can't use the adaptive card, so we need a check.
-                if (stepContext.context.activity.channelId === 'slack') {
+            if (stepContext.context.activity.channelId === 'slack') {
+                await responseAsJSON.webPages.value.forEach(async (item, index) => {
                     await stepContext.context.sendActivity(
                         {
                             channelData: {
@@ -192,7 +191,9 @@ class TicketDialog extends ComponentDialog {
                             }
                         }
                     );
-                } else {
+                });
+            } else {
+                await responseAsJSON.webPages.value.forEach(async (item, index) => {
                     // Create a Template instance from the template payload
                     const template = new ACData.Template(searchResultTicketCard);
 
@@ -212,8 +213,15 @@ class TicketDialog extends ComponentDialog {
                     cardMessage.attachments = [CardFactory.adaptiveCard(card)];
 
                     await stepContext.context.sendActivity(cardMessage);
-                }
-            });
+                });
+            }
+        }
+
+        // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
+        if (stepContext.context.activity.channelId === 'slack') {
+            await new Promise(resolve => setTimeout(() => resolve(
+                console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+            ), 5000));
         }
 
         // Create the list of options to choose from.
