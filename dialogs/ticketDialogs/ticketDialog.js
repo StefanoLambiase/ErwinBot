@@ -154,22 +154,53 @@ class TicketDialog extends ComponentDialog {
                 { type: 'message', text: 'These are the informations that I have found! 😀' }
             ]);
 
-            // Send the informations as adaptive cards.
+            // Send the informations as adaptive cards using a forEach loop.
             await responseAsJSON.webPages.value.forEach(async (item, index) => {
                 // On Slack we can't use the adaptive card, so we need a check.
                 if (stepContext.context.activity.channelId === 'slack') {
-                    await stepContext.context.sendActivity('Sorry, this feature hasn\'t been implementing yet.');
-                    // Send a full-fidelity-message.
+                    await stepContext.context.sendActivity(
+                        {
+                            channelData: {
+                                attachments: [
+                                    {
+                                        title: 'Site name',
+                                        text: (index + 1) + '. ' + item.name
+                                    },
+                                    {
+                                        fields: [
+                                            {
+                                                title: 'Date last crawled',
+                                                value: moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a'),
+                                                short: true
+                                            },
+                                            {
+                                                title: 'Site language',
+                                                value: item.language,
+                                                short: true
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        title: 'Link to the site',
+                                        text: item.url
+                                    },
+                                    {
+                                        title: 'Site snippet',
+                                        text: item.snippet
+                                    }
+                                ]
+                            }
+                        }
+                    );
                 } else {
                     // Create a Template instance from the template payload
                     const template = new ACData.Template(searchResultTicketCard);
 
-                    const cardTitle = (index + 1) + '. ' + item.name;
                     const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
 
                     const card = template.expand({
                         $root: {
-                            title: cardTitle,
+                            title: item.name,
                             lastCrawled: date.toString(),
                             language: item.language,
                             linkToTheSite: item.url,
