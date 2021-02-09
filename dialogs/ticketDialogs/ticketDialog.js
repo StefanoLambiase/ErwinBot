@@ -154,27 +154,33 @@ class TicketDialog extends ComponentDialog {
             ]);
 
             // Send the informations as adaptive cards.
-            responseAsJSON.webPages.value.forEach((item, index) => {
-                // Create a Template instance from the template payload
-                const template = new ACData.Template(searchResultTicketCard);
+            responseAsJSON.webPages.value.forEach(async (item, index) => {
+                // On Slack we can't use the adaptive card, so we need a check.
+                if (stepContext.context.activity.channelId === 'slack') {
+                    await stepContext.context.sendActivity('Sorry, this feature hasn\'t been implementing yet.');
+                    // Send a full-fidelity-message.
+                } else {
+                    // Create a Template instance from the template payload
+                    const template = new ACData.Template(searchResultTicketCard);
 
-                const cardTitle = index + '. ' + item.name;
-                const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
+                    const cardTitle = (index + 1) + '. ' + item.name;
+                    const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
 
-                const card = template.expand({
-                    $root: {
-                        title: cardTitle,
-                        lastCrawled: date.toString(),
-                        language: item.language,
-                        linkToTheSite: item.url,
-                        snippet: item.snippet
-                    }
-                });
+                    const card = template.expand({
+                        $root: {
+                            title: cardTitle,
+                            lastCrawled: date.toString(),
+                            language: item.language,
+                            linkToTheSite: item.url,
+                            snippet: item.snippet
+                        }
+                    });
 
-                const cardMessage = { type: ActivityTypes.Message };
-                cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+                    const cardMessage = { type: ActivityTypes.Message };
+                    cardMessage.attachments = [CardFactory.adaptiveCard(card)];
 
-                stepContext.context.sendActivity(cardMessage);
+                    await stepContext.context.sendActivity(cardMessage);
+                }
             });
         }
 
@@ -271,10 +277,12 @@ class TicketDialog extends ComponentDialog {
         console.log(ticket.toString());
 
         console.log(stepContext.context.activity.channelId);
-        // * Check if the channel used by the user is Slack or not.
+
+        // Starts to send the messages to the user.
+        await stepContext.context.sendActivity('We are at the final step.');
+        // Check if the channel used by the user is Slack or not.
         if (stepContext.context.activity.channelId === 'slack') {
-            await stepContext.context.sendActivities([
-                { type: 'message', text: 'We are at the final step.' },
+            await stepContext.context.sendActivity(
                 {
                     channelData: {
                         text: 'Problem Informations',
@@ -297,22 +305,20 @@ class TicketDialog extends ComponentDialog {
                             }
                         ]
                     }
-                },
-                { type: 'message', text: 'During this interaction you have reflected about the problem.' }
-            ]);
+                }
+            );
         } else {
             await stepContext.context.sendActivities([
-                { type: 'message', text: 'We are at the final step.' },
                 // Send ticket informations as messages.
                 { type: 'message', text: 'These are the problem informations' },
                 { type: 'message', text: '**Problem definition**: ' + ticket.problemDefinition },
                 { type: 'message', text: '**Problem cause**: ' + ticket.problemCause },
                 { type: 'message', text: '**Possible solutions**: ' + ticket.getPossibilitiesAsString() },
-                { type: 'message', text: '**Favourite solution**: ' + ticket.problemSolution },
-                // Send a reflexive message.
-                { type: 'message', text: 'During this interaction you have reflected about the problem.' }
+                { type: 'message', text: '**Favourite solution**: ' + ticket.problemSolution }
             ]);
         }
+        // Sends a reflective message.
+        await stepContext.context.sendActivity('During this interaction you have reflected about the problem.');
 
         const options = ['send', 'done'];
         const message = 'If you want to send the ticket to your manager, type \'send\', else type \'done\'.';
