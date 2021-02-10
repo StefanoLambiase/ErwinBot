@@ -30,10 +30,10 @@ const TEXT_PROMPT = 'TEXT_PROMPT';
 const {Question} = require('./model/question');
 
 const questionsList = [
-    "How do you feel today?\n", 
-    "What did you do since yesterday?\n", 
-    "What will you do today?\n",
-    "Anything blocking your progress?"
+    "   How do you feel today? \n", 
+    "   What did you do since yesterday? \n", 
+    "   What will you do today? \n",
+    "   Anything blocking your progress?"
 ];
 
 class ScrumDialog extends ComponentDialog {
