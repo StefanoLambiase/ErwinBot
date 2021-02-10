@@ -26,6 +26,9 @@ const SCRUM_DIALOG = 'SCRUM_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
+// Class import
+const {Question} = require('./model/question');
+
 const questionsList = [];
 
 class ScrumDialog extends ComponentDialog {
@@ -61,6 +64,9 @@ class ScrumDialog extends ComponentDialog {
     }
 
     async dailyScrumInitialStep(step) {
+
+        step.values.questionsInfo = new Question();;
+
         await step.context.sendActivities([
             {type:"message", text:"Hi, i'm here to help you!"},
             {type:"message", text:"I'll guide you through the definition of you daily scrum's questions"},
@@ -72,20 +78,18 @@ class ScrumDialog extends ComponentDialog {
     }
 
     async defaultQuestionStep(step) {
-        const userName = step.result;
-        questionsList.push("1. How do you feel today?", "2. What did you do since yesterday?");
-        const questionOne = "1. How do you feel today?";
-        const questionTwo = "2. What did you do since yesterday?";
-        const questionThree = "3. What will you do today?";
-        const questionFour = "4. Anything blocking your progress?";
+
+        step.values.questionsInfo.user = step.result;
+
+        questionsList.push("1. How do you feel today?", 
+                        "2. What did you do since yesterday?", 
+                        "3. What will you do today?",
+                        "4. Anything blocking your progress?");
 
         await step.context.sendActivities([
-            {type:"message", text:"So " + userName + ", we need to definde the questions that would be sent to your teammates."},
+            {type:"message", text:"So " + step.values.questionsInfo.user + ", we need to definde the questions that would be sent to your teammates."},
             {type:"message", text:"In order to ease you work i've prepared some default questions that you can use"},
-            {type:"message", text: questionOne},
-            {type:"message", text: questionTwo},
-            {type:"message", text: questionThree},
-            {type:"message", text: questionFour}
+            {type:"message", text: questionsList.toString()},
         ])
         return await step.prompt(TEXT_PROMPT, {
             prompt: "Do you want to use these for you daily scrum?"
@@ -100,6 +104,11 @@ class ScrumDialog extends ComponentDialog {
         })
 
         if(userResponse == 'yes'){
+
+            const questionsInfo = new Question (
+                step.values.questionsInfo.user,
+                questionsList
+            )
             await step.context.sendActivities([
                 {type:"message", text:"Nice we have done, i'll sent those questions to your teammates."},
                 {type:"message", text:"I'm glad to help you, have a nice day! :D"}
@@ -110,7 +119,7 @@ class ScrumDialog extends ComponentDialog {
                 await client.chat.postMessage({
                     token: process.env.SlackUserAccessToken,
                     channel: "C01JVNWH1GS",
-                    text: questionsList
+                    text: questionsInfo.toString
                 });
             }catch(error){
                 console.error(error);
