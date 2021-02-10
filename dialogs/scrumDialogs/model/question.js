@@ -13,7 +13,7 @@ class Question {
     getQuestionsAsString() {
         let questionsString = "";
         if(this.questionsList.length > 0){
-            this.questionsList.array.forEach((element, index) => {
+            this.questionsList.forEach((element, index) => {
                 questionsString = questionsString.concat("\n" + (index+1) + "." + element);
             });
         }else{
@@ -24,7 +24,7 @@ class Question {
     toString(){
         let questionsString = "";
         if(this.questionsList.length > 0){
-            this.questionsList.array.forEach((element, index) => {
+            this.questionsList.forEach((element, index) => {
                 questionsString = questionsString.concat("\n" + (index+1) + "." + element);
             });
         }else{
