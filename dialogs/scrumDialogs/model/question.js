@@ -30,4 +30,4 @@ class Question {
     }
 }
 
-module.exports.Question = Questions;
+module.exports.Question = Question;
