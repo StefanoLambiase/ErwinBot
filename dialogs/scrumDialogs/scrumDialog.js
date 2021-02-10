@@ -80,7 +80,7 @@ class ScrumDialog extends ComponentDialog {
         const questionFour = "4. Anything blocking your progress?";
 
         await step.context.sendActivities([
-            {type:"message", text:"So" + userName + ", we need to definde the questions that would be sent to your teammates."},
+            {type:"message", text:"So " + userName + ", we need to definde the questions that would be sent to your teammates."},
             {type:"message", text:"In order to ease you work i've prepared some default questions that you can use"},
             {type:"message", text: questionOne},
             {type:"message", text: questionTwo},
@@ -110,9 +110,7 @@ class ScrumDialog extends ComponentDialog {
                 await client.chat.postMessage({
                     token: process.env.SlackUserAccessToken,
                     channel: "D01K1USAYJY",
-                    text: questionsList.forEach(
-                        element
-                    )
+                    text: questionsList
                 });
             }catch(error){
                 console.error(error);
