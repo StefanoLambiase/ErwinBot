@@ -14,7 +14,7 @@ class Question {
         let questionsString = "";
         if(this.questionsList.length > 0){
             this.questionsList.array.forEach((element, index) => {
-                questionsString.concat("\n" + (index+1) + "." + element);
+                questionsString = questionsString.concat("\n" + (index+1) + "." + element);
             });
         }else{
             questionsString = questionsString.concat("No questions defined")
@@ -25,7 +25,7 @@ class Question {
         let questionsString = "";
         if(this.questionsList.length > 0){
             this.questionsList.array.forEach((element, index) => {
-                questionsString.concat("\n" + (index+1) + "." + element);
+                questionsString = questionsString.concat("\n" + (index+1) + "." + element);
             });
         }else{
             questionsString = questionsString.concat("No questions defined")
