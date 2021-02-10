@@ -5,10 +5,6 @@ const {
     WaterfallDialog
 } = require('botbuilder-dialogs');
 
-const {
-    LuisRecognizer
-} = require('botbuilder-ai');
-
 // Dialogs names.
 const QUESTION_DEFINITION_DIALOG = 'QUESTION_DEFINITION_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
@@ -52,7 +48,7 @@ class QuestionsDefinitionDialog extends ComponentDialog{
 
         //check if the value inserted is an array and continue the process with it
         //if not instance a new one
-        const questionsList = Array.isArray(step.option) ? step.option : [];
+        const questionsList = Array.isArray(step.options) ? step.options : [];
         step.values[this.questionInserted] = questionsList;
 
         let informativeText = "";
