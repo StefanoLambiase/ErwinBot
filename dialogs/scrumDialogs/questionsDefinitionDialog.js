@@ -18,6 +18,10 @@ class QuestionsDefinitionDialog extends ComponentDialog{
     constructor(userState) {
         super(QUESTION_DEFINITION_DIALOG);
 
+        this.finishOption = "finish";
+
+        this.questionInserted = "value-questionInserted";
+
         // Adding used dialogs
         this.addDialog(new TextPrompt(TEXT_PROMPT));
 
@@ -45,11 +49,43 @@ class QuestionsDefinitionDialog extends ComponentDialog{
     }
 
     async definitionStep(step){
-        //const questionsList = Array.isArray(step.questions)
+
+        //check if the value inserted is an array and continue the process with it
+        //if not instance a new one
+        const questionsList = Array.isArray(step.option) ? step.option : [];
+        step.values[this.questionInserted] = questionsList;
+
+        let informativeText = "";
+        if(questionsList.length === 0){
+            informativeText = "Please define the first question";
+        }else{
+            informativeText = "You've defined " + questionsList.length + " questions. Type " + this.finishOption + " to end the process or define another question."
+        }
+
+        return await step.prompt(TEXT_PROMPT, {
+            prompt: informativeText
+        });
     }
 
     async loopStep(step){
+        // Take the user input
+        const questionsList = step.values[this.questionInserted];
+        const input = step.result;
 
+        const isFinish = (input === this.finishOption);
+
+        if(!isFinish){
+            // Only if it's a question we take it
+            questionsList.push(input);
+        }
+
+        if(isFinish && questionsList.length > 0){
+            // If the user typed "finish" and we've enough questions 
+            return await step.endDialog(questionsList);
+        }else{
+            // Continue to cycle
+            return await step.replaceDialog(QUESTION_DEFINITION_DIALOG, questionsList);
+        }
     }
 }
 

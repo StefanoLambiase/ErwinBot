@@ -30,10 +30,10 @@ const TEXT_PROMPT = 'TEXT_PROMPT';
 const {Question} = require('./model/question');
 
 const questionsList = [
-    "1. How do you feel today? \n", 
-    "2. What did you do since yesterday? \n", 
-    "3. What will you do today? \n",
-    "4. Anything blocking your progress?"
+    "How do you feel today? \n", 
+    "What did you do since yesterday? \n", 
+    "What will you do today? \n",
+    "Anything blocking your progress?"
 ];
 
 class ScrumDialog extends ComponentDialog {
@@ -47,7 +47,8 @@ class ScrumDialog extends ComponentDialog {
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.dailyScrumInitialStep.bind(this),
             this.defaultQuestionStep.bind(this),
-            this.defineQuestionStep.bind(this)
+            this.defineQuestionStep.bind(this),
+            this.finalStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -134,13 +135,43 @@ class ScrumDialog extends ComponentDialog {
             
             // Clear the questions' array
             questionsList = []
-            
+
             await step.context.sendActivities([
                 {type:"message", text:"Ok, now you have to define your own questions."},
                 {type:"message", text:"Let's start with the first one, we'll proceed one question at a time"}
             ]);
             return await step.beginDialog(QUESTIONS_DEFINITION_DIALOG);
         }
+    }
+
+    async finalStep(){
+        questionsList = step.result || [];
+
+        // Create an instance of Question object to send the message
+        const questionsInfo = new Question (
+            step.values.questionsInfo.user,
+            questionsList
+        );
+
+        await step.context.sendActivities([
+            {type:"message", text:"Nice we have done, i'll sent those questions to your teammates:"},
+            {type:"message", text: questionsInfo.getQuestionsAsString() },
+            {type:"message", text:"I'm glad to help you, have a nice day! :D"}
+        ]);
+
+        // Function to sent private messages in slack channels
+        try{
+            await client.chat.postMessage({
+                token: process.env.SlackUserAccessToken,
+                channel: "C01JVNWH1GS",
+                text: questionsInfo.toString()
+            });
+        }catch(error){
+            console.error(error);
+        }
+        return await step.context.sendActivities([
+            {type:"message", text:"Questions sent, bye bye!"}
+        ]);
     }
 }
 
