@@ -81,9 +81,9 @@ class ScrumDialog extends ComponentDialog {
 
         step.values.questionsInfo.user = step.result;
 
-        questionsList.push("1. How do you feel today?", 
-                        "2. What did you do since yesterday?", 
-                        "3. What will you do today?",
+        questionsList.push("1. How do you feel today? \n", 
+                        "2. What did you do since yesterday? \n", 
+                        "3. What will you do today? \n",
                         "4. Anything blocking your progress?");
 
         await step.context.sendActivities([
@@ -119,7 +119,7 @@ class ScrumDialog extends ComponentDialog {
                 await client.chat.postMessage({
                     token: process.env.SlackUserAccessToken,
                     channel: "C01JVNWH1GS",
-                    text: questionsInfo.toString
+                    text: questionsInfo.toString()
                 });
             }catch(error){
                 console.error(error);
