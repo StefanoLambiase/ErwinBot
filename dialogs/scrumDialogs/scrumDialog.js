@@ -29,7 +29,12 @@ const TEXT_PROMPT = 'TEXT_PROMPT';
 // Class import
 const {Question} = require('./model/question');
 
-const questionsList = [];
+const questionsList = [
+    "1. How do you feel today? \n", 
+    "2. What did you do since yesterday? \n", 
+    "3. What will you do today? \n",
+    "4. Anything blocking your progress?"
+];
 
 class ScrumDialog extends ComponentDialog {
     constructor(userState) {
@@ -81,11 +86,6 @@ class ScrumDialog extends ComponentDialog {
 
         step.values.questionsInfo.user = step.result;
 
-        questionsList.push("1. How do you feel today? \n", 
-                        "2. What did you do since yesterday? \n", 
-                        "3. What will you do today? \n",
-                        "4. Anything blocking your progress?");
-
         await step.context.sendActivities([
             {type:"message", text:"So " + step.values.questionsInfo.user + ", we need to definde the questions that would be sent to your teammates."},
             {type:"message", text:"In order to ease you work i've prepared some default questions that you can use"},
@@ -105,10 +105,12 @@ class ScrumDialog extends ComponentDialog {
 
         if(userResponse == 'yes'){
 
+            // Create an instance of Question object to send the message
             const questionsInfo = new Question (
                 step.values.questionsInfo.user,
                 questionsList
             )
+
             await step.context.sendActivities([
                 {type:"message", text:"Nice we have done, i'll sent those questions to your teammates."},
                 {type:"message", text:"I'm glad to help you, have a nice day! :D"}
@@ -129,6 +131,10 @@ class ScrumDialog extends ComponentDialog {
             ]);
 
         } else if(userResponse == 'no'){
+            
+            // Clear the questions' array
+            questionsList = []
+            
             await step.context.sendActivities([
                 {type:"message", text:"Ok, now you have to define your own questions."},
                 {type:"message", text:"Let's start with the first one, we'll proceed one question at a time"}
