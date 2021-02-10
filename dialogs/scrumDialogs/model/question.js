@@ -23,9 +23,9 @@ class Question {
 
     toString(){
         const wellFormattedString = "";
-        wellFormattedString.getQuestionsAsString;
+        wellFormattedString.getQuestionsAsString();
 
-        return "Your lovely manager " + this.user +" sent you this simple questions! :D" + 
+        return "Your lovely manager " + this.user +" sent you these simple questions! :D" + 
                 "\n" + wellFormattedString;
     }
 }
