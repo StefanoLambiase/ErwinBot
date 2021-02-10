@@ -30,9 +30,9 @@ const TEXT_PROMPT = 'TEXT_PROMPT';
 const {Question} = require('./model/question');
 
 const questionsList = [
-    "How do you feel today? \n", 
-    "What did you do since yesterday? \n", 
-    "What will you do today? \n",
+    "How do you feel today?\n", 
+    "What did you do since yesterday?\n", 
+    "What will you do today?\n",
     "Anything blocking your progress?"
 ];
 
@@ -132,9 +132,6 @@ class ScrumDialog extends ComponentDialog {
             ]);
 
         } else if(userResponse == 'no'){
-            
-            // Clear the questions' array
-            questionsList = []
 
             await step.context.sendActivities([
                 {type:"message", text:"Ok, now you have to define your own questions."},
@@ -145,12 +142,12 @@ class ScrumDialog extends ComponentDialog {
     }
 
     async finalStep(){
-        questionsList = step.result || [];
+        const list = step.result || [];
 
         // Create an instance of Question object to send the message
         const questionsInfo = new Question (
             step.values.questionsInfo.user,
-            questionsList
+            list
         );
 
         await step.context.sendActivities([
