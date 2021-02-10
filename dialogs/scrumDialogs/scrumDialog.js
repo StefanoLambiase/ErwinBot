@@ -26,6 +26,8 @@ const SCRUM_DIALOG = 'SCRUM_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
+const questionsList = [];
+
 class ScrumDialog extends ComponentDialog {
     constructor(userState) {
         super(SCRUM_DIALOG);
@@ -71,6 +73,7 @@ class ScrumDialog extends ComponentDialog {
 
     async defaultQuestionStep(step) {
         const userName = step.result;
+        questionsList.push("1. How do you feel today?", "2. What did you do since yesterday?");
         const questionOne = "1. How do you feel today?";
         const questionTwo = "2. What did you do since yesterday?";
         const questionThree = "3. What will you do today?";
@@ -107,7 +110,9 @@ class ScrumDialog extends ComponentDialog {
                 await client.chat.postMessage({
                     token: process.env.SlackUserAccessToken,
                     channel: "D01K1USAYJY",
-                    text: "hi stefano"
+                    text: questionsList.forEach(
+                        element
+                    )
                 });
             }catch(error){
                 console.error(error);
