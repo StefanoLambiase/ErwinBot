@@ -22,11 +22,17 @@ class Question {
     }
 
     toString(){
-        const wellFormattedString = "";
-        wellFormattedString.getQuestionsAsString();
+        let questionsString = "";
+        if(this.questionsList > 0){
+            this.questionsList.array.forEach((element, index) => {
+                questionsString.concat("\n" + (index+1) + "." + element);
+            });
+        }else{
+            questionsString = questionsString.concat("No questions defined")
+        }
 
         return "Your lovely manager " + this.user +" sent you these simple questions! :D" + 
-                "\n" + wellFormattedString;
+                "\n" + questionsString;
     }
 }
 
