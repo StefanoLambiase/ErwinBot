@@ -109,7 +109,7 @@ class ScrumDialog extends ComponentDialog {
             try{
                 await client.chat.postMessage({
                     token: process.env.SlackUserAccessToken,
-                    channel: "D01K1USAYJY",
+                    channel: "C01JVNWH1GS",
                     text: questionsList
                 });
             }catch(error){
