@@ -23,12 +23,14 @@ class InterruptDialog extends ComponentDialog {
             const text = innerDc.context.activity.text.toLowerCase();
 
             switch (text) {
+            // Message to help the user with the lists of commands.
             case 'help':
             case '?': {
                 const helpMessageText = 'Type \'cancel\' to interrupt the interaction';
                 await innerDc.context.sendActivity(helpMessageText, helpMessageText, InputHints.ExpectingInput);
                 return { status: DialogTurnStatus.waiting };
             }
+            // Message to quit the actual execution and return to the main dialog.
             case 'cancel':
             case 'quit': {
                 const cancelMessageText = 'Cancelling...';
