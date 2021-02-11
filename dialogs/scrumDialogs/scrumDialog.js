@@ -129,11 +129,21 @@ class ScrumDialog extends ComponentDialog {
                 step.values.questionsInfo.user,
                 questionsList
             );
-            allChannels.forEach(element => {
+            /* allChannels.forEach(element => {
                 if (element.name === channelSelected) {
                     channelSelectedID = element.id;
                 }
-            });
+            }); */
+            try {
+                const result = await client.conversations.list();
+                result.channels.forEach(function(conversation) {
+                    if (conversation.name === channelSelected) {
+                        channelSelectedID = conversation.id;
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+            }
             await step.context.sendActivities([
                 { type: 'message', text: 'Nice we have done, iam going to send those questions to your teammates.' },
                 { type: 'message', text: 'I am glad to help you, have a nice day! :D' }
