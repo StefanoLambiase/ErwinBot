@@ -34,6 +34,9 @@ const client = new WebClient(process.env.SlackUserAccessToken, {
 });
 
 const channelsName = [];
+const allChannels = {};
+const channelSelected = '';
+let channelSelectedID = '';
 
 class ScrumDialog extends ComponentDialog {
     constructor(userState) {
@@ -45,6 +48,7 @@ class ScrumDialog extends ComponentDialog {
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.dailyScrumInitialStep.bind(this),
+            this.selectChannel.bind(this),
             this.defaultQuestionStep.bind(this),
             this.defineQuestionStep.bind(this),
             this.finalStep.bind(this)
@@ -81,9 +85,34 @@ class ScrumDialog extends ComponentDialog {
         });
     }
 
-    async defaultQuestionStep(step) {
+    async selectChannel(step) {
         step.values.questionsInfo.user = step.result;
+        // Retrieve the list with all slack channels
+        try {
+            const result = await client.conversations.list();
+            result.channels.forEach(function(conversation) {
+                channelsName.push(conversation.name + '\n');
+                allChannels[conversation.id] = conversation;
+            });
+        } catch (error) {
+            console.error(error);
+        }
+        await step.context.sendActivities([
+            { type: 'message', text: 'You have to select the channel in which you want to send the questions' },
+            { type: 'message', text: 'this is the list of all channels' },
+            { type: 'message', text: channelsName.toString() }
+        ]);
+        await step.context.sendActivities([
+            { type: 'message', text: 'Nice we have done, iam going to send those questions to your teammates.' },
+            { type: 'message', text: 'I am glad to help you, have a nice day! :D' }
+        ]);
+        return await step.prompt(TEXT_PROMPT, {
+            prompt: 'Please type the name of the channel'
+        });
+    }
 
+    async defaultQuestionStep(step) {
+        step.values.channelSelected = step.result;
         await step.context.sendActivities([
             { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
             { type: 'message', text: 'In order to ease you work i have prepared some default questions that you can use' },
@@ -103,29 +132,16 @@ class ScrumDialog extends ComponentDialog {
                 step.values.questionsInfo.user,
                 questionsList
             );
-            try {
-                const result = await client.conversations.list();
-                result.channels.forEach(function(conversation) {
-                    channelsName.push(conversation.name);
-                });
-            } catch (error) {
-                console.error(error);
-            }
-            await step.context.sendActivities([
-                { type: 'message', text: 'Just one more step' },
-                { type: 'message', text: 'this is the list of all channels' },
-                { type: 'message', text: channelsName.toString() }
-            ]);
-            await step.context.sendActivities([
-                { type: 'message', text: 'Nice we have done, iam going to send those questions to your teammates.' },
-                { type: 'message', text: 'I am glad to help you, have a nice day! :D' }
-            ]);
-
+            allChannels.forEach(element => {
+                if (element.name === channelSelected) {
+                    channelSelectedID = element.id;
+                }
+            });
             // Function to sent private messages in slack channels
             try {
                 await client.chat.postMessage({
                     token: process.env.SlackUserAccessToken,
-                    channel: 'C01JVNWH1GS',
+                    channel: channelSelectedID,
                     text: questionsInfo.toString()
                 });
             } catch (error) {
