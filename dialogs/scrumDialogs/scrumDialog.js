@@ -34,8 +34,8 @@ const client = new WebClient(process.env.SlackUserAccessToken, {
 });
 
 const channelsName = [];
-let allChannels = {};
-const channelSelected = '';
+const allChannels = {};
+let channelSelected = '';
 let channelSelectedID = '';
 
 class ScrumDialog extends ComponentDialog {
@@ -108,12 +108,12 @@ class ScrumDialog extends ComponentDialog {
     }
 
     async defaultQuestionStep(step) {
-        step.values.channelSelected = step.result;
+        channelSelected = step.result;
         await step.context.sendActivities([
             { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
             { type: 'message', text: 'In order to ease you work i have prepared some default questions that you can use' },
             { type: 'message', text: questionsList.toString() },
-            { type: 'message', text: channelSelected.toString() }
+            { type: 'message', text: channelSelected }
         ]);
         return await step.prompt(TEXT_PROMPT, {
             prompt: 'Do you want to use these for you daily scrum?'
