@@ -5,18 +5,18 @@ const {
     WaterfallDialog
 } = require('botbuilder-dialogs');
 
-const {
-    LuisRecognizer
-} = require('botbuilder-ai');
-
 // Dialogs names.
-const QUESTION_DEFINITION_DIALOG = 'QUESTION_DEFINITION_DIALOG';
+const QUESTIONS_DEFINITION_DIALOG = 'QUESTIONS_DEFINITION_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
-class QuestionsDefinitionDialog extends ComponentDialog{
+class QuestionsDefinitionDialog extends ComponentDialog {
     constructor(userState) {
-        super(QUESTION_DEFINITION_DIALOG);
+        super(QUESTIONS_DEFINITION_DIALOG);
+
+        this.finishOption = 'finish';
+
+        this.questionInserted = 'value-questionInserted';
 
         // Adding used dialogs
         this.addDialog(new TextPrompt(TEXT_PROMPT));
@@ -29,29 +29,45 @@ class QuestionsDefinitionDialog extends ComponentDialog{
         this.initialDialogId = WATERFALL_DIALOG;
     }
 
-    /**
-     * The run method handles the incoming activity (in the form of a TurnContext) and passes it through the dialog system.
-     * If no dialog is active, it will start the default dialog.
-     */
-    async run(turnContext, accessor) {
-        const dialogSet = new DialogSet(accessor);
-        dialogSet.add(this);
+    async definitionStep(step) {
+        // check if the value inserted is an array and continue the process with it
+        // if not instance a new one
+        const questionsList = Array.isArray(step.options) ? step.options : [];
+        step.values[this.questionInserted] = questionsList;
 
-        const dialogContext = await dialogSet.createContext(turnContext);
-        const results = await dialogContext.continueDialog();
-        if (results.status === DialogTurnStatus.empty) {
-            await dialogContext.beginDialog(this.id);
+        let informativeText = '';
+        if (questionsList.length === 0) {
+            informativeText = 'Please define the first question';
+        } else {
+            informativeText = 'You have defined ' + questionsList.length + ' questions. Type ' + this.finishOption + ' to end the process or define another question.';
         }
+
+        return await step.prompt(TEXT_PROMPT, {
+            prompt: informativeText
+        });
     }
 
-    async definitionStep(step){
-        //const questionsList = Array.isArray(step.questions)
-    }
+    async loopStep(step) {
+        // Take the user input
+        const questionsList = step.values[this.questionInserted];
+        const input = step.result;
 
-    async loopStep(step){
+        const isFinish = (input === this.finishOption);
 
+        if (!isFinish) {
+            // Only if it's a question we take it
+            questionsList.push(input);
+        }
+
+        if (isFinish && questionsList.length > 0) {
+            // If the user typed "finish" and we've enough questions
+            return await step.endDialog(questionsList);
+        } else {
+            // Continue to cycle
+            return await step.replaceDialog(QUESTIONS_DEFINITION_DIALOG, questionsList);
+        }
     }
 }
 
 module.exports.QuestionsDefinitionDialog = QuestionsDefinitionDialog;
-module.exports.QUESTION_DEFINITION_DIALOG = QUESTION_DEFINITION_DIALOG;
+module.exports.QUESTIONS_DEFINITION_DIALOG = QUESTIONS_DEFINITION_DIALOG;
