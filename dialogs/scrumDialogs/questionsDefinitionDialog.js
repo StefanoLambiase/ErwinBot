@@ -6,13 +6,13 @@ const {
 } = require('botbuilder-dialogs');
 
 // Dialogs names.
-const QUESTION_DEFINITION_DIALOG = 'QUESTION_DEFINITION_DIALOG';
+const QUESTIONS_DEFINITION_DIALOG = 'QUESTIONS_DEFINITION_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
 class QuestionsDefinitionDialog extends ComponentDialog{
     constructor(userState) {
-        super(QUESTION_DEFINITION_DIALOG);
+        super(QUESTIONS_DEFINITION_DIALOG);
 
         this.finishOption = "finish";
 
@@ -80,10 +80,10 @@ class QuestionsDefinitionDialog extends ComponentDialog{
             return await step.endDialog(questionsList);
         }else{
             // Continue to cycle
-            return await step.replaceDialog(QUESTION_DEFINITION_DIALOG, questionsList);
+            return await step.replaceDialog(QUESTIONS_DEFINITION_DIALOG, questionsList);
         }
     }
 }
 
 module.exports.QuestionsDefinitionDialog = QuestionsDefinitionDialog;
-module.exports.QUESTION_DEFINITION_DIALOG = QUESTION_DEFINITION_DIALOG;
+module.exports.QUESTIONS_DEFINITION_DIALOG = QUESTIONS_DEFINITION_DIALOG;
