@@ -100,6 +100,10 @@ class ScrumDialog extends ComponentDialog {
             { type: 'message', text: 'this is the list of all channels' },
             { type: 'message', text: channelsName.toString() }
         ]);
+
+        // Clear the array
+        channelsName.length = 0;
+
         return await step.prompt(TEXT_PROMPT, {
             prompt: 'Please type the name of the channel'
         });
