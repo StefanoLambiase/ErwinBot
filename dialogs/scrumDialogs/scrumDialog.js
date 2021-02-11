@@ -91,8 +91,8 @@ class ScrumDialog extends ComponentDialog {
         try {
             const result = await client.conversations.list();
             result.channels.forEach(function(conversation) {
-                channelsName.push(conversation.name + '\n');
-                allChannels = conversation;
+                channelsName.push(conversation.name);
+                allChannels[conversation.name] = conversation;
             });
         } catch (error) {
             console.error(error);
@@ -112,7 +112,8 @@ class ScrumDialog extends ComponentDialog {
         await step.context.sendActivities([
             { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
             { type: 'message', text: 'In order to ease you work i have prepared some default questions that you can use' },
-            { type: 'message', text: questionsList.toString() }
+            { type: 'message', text: questionsList.toString() },
+            { type: 'message', text: channelSelected.toString() }
         ]);
         return await step.prompt(TEXT_PROMPT, {
             prompt: 'Do you want to use these for you daily scrum?'
