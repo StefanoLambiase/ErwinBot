@@ -34,7 +34,6 @@ const client = new WebClient(process.env.SlackUserAccessToken, {
 });
 
 const channelsName = [];
-const allChannels = {};
 let channelSelected = '';
 let channelSelectedID = '';
 
@@ -92,7 +91,6 @@ class ScrumDialog extends ComponentDialog {
             const result = await client.conversations.list();
             result.channels.forEach(function(conversation) {
                 channelsName.push(conversation.name);
-                allChannels[conversation.name] = conversation;
             });
         } catch (error) {
             console.error(error);
@@ -112,8 +110,7 @@ class ScrumDialog extends ComponentDialog {
         await step.context.sendActivities([
             { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
             { type: 'message', text: 'In order to ease you work i have prepared some default questions that you can use' },
-            { type: 'message', text: questionsList.toString() },
-            { type: 'message', text: channelSelected }
+            { type: 'message', text: questionsList.toString() }
         ]);
         return await step.prompt(TEXT_PROMPT, {
             prompt: 'Do you want to use these for you daily scrum?'
@@ -129,14 +126,12 @@ class ScrumDialog extends ComponentDialog {
                 step.values.questionsInfo.user,
                 questionsList
             );
-            /* allChannels.forEach(element => {
-                if (element.name === channelSelected) {
-                    channelSelectedID = element.id;
-                }
-            }); */
+
+            // Retrieve the list with all slack channels
             try {
                 const result = await client.conversations.list();
                 result.channels.forEach(function(conversation) {
+                    // Get the channel ID linked to the selected channel
                     if (conversation.name === channelSelected) {
                         channelSelectedID = conversation.id;
                     }
@@ -178,6 +173,19 @@ class ScrumDialog extends ComponentDialog {
             list
         );
 
+        // Retrieve the list with all slack channels
+        try {
+            const result = await client.conversations.list();
+            result.channels.forEach(function(conversation) {
+                // Get the channel ID linked to the selected channel
+                if (conversation.name === channelSelected) {
+                    channelSelectedID = conversation.id;
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+
         await step.context.sendActivities([
             { type: 'message', text: 'Nice we have done, i will send those questions to your teammates:' },
             { type: 'message', text: questionsInfo.getQuestionsAsString() },
@@ -188,7 +196,7 @@ class ScrumDialog extends ComponentDialog {
         try {
             await client.chat.postMessage({
                 token: process.env.SlackUserAccessToken,
-                channel: 'C01JVNWH1GS',
+                channel: channelSelectedID,
                 text: questionsInfo.toString()
             });
         } catch (error) {
