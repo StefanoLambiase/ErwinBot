@@ -1,8 +1,4 @@
 
-const { 
-    ActivityTypes 
-} = require('botbuilder');
-
 const {
     TextPrompt,
     ComponentDialog,
@@ -10,7 +6,6 @@ const {
     DialogTurnStatus,
     WaterfallDialog
 } = require('botbuilder-dialogs');
-
 
 // Imports for Slack
 const InfoOptions = require('../../botResources/slack/InfoOptions.json');
@@ -27,7 +22,7 @@ class InfoDialog extends ComponentDialog {
         // Adding used dialogs
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-            this.optionStep.bind(this),
+            this.optionStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;

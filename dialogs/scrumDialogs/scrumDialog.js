@@ -1,12 +1,5 @@
 const { WebClient, LogLevel } = require('@slack/web-api');
 
-// Import required types from libraries
-const {
-    ActivityTypes,
-    MessageFactory,
-    InputHints
-} = require('botbuilder');
-
 const {
     TextPrompt,
     ComponentDialog,
@@ -27,14 +20,18 @@ const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 
 // Class import
-const {Question} = require('./model/question');
+const { Question } = require('./model/question');
 
 const questionsList = [
-    "   How do you feel today? \n", 
-    "   What did you do since yesterday? \n", 
-    "   What will you do today? \n",
-    "   Anything blocking your progress?"
+    '   How do you feel today? \n',
+    '   What did you do since yesterday? \n',
+    '   What will you do today? \n',
+    '   Anything blocking your progress?'
 ];
+
+const client = new WebClient(process.env.SlackUserAccessToken, {
+    logLevel: LogLevel.DEBUG
+});
 
 class ScrumDialog extends ComponentDialog {
     constructor(userState) {
@@ -70,104 +67,94 @@ class ScrumDialog extends ComponentDialog {
     }
 
     async dailyScrumInitialStep(step) {
-
-        step.values.questionsInfo = new Question();;
+        step.values.questionsInfo = new Question();
 
         await step.context.sendActivities([
-            {type:"message", text:"Hi, i'm here to help you!"},
-            {type:"message", text:"I'll guide you through the definition of you daily scrum's questions"},
-            {type:"message", text:"The questions you will define, will be sent via brodcast messages to every teammates."}
-        ])
+            { type: 'message', text: 'Hi, i am here to help you!' },
+            { type: 'message', text: 'I will guide you through the definition of you daily scrum' },
+            { type: 'message', text: 'The questions you will define, will be sent via brodcast messages to every teammates.' }
+        ]);
         return await step.prompt(TEXT_PROMPT, {
-            prompt: "Just to be more informal, type your name here :D"
-        })
+            prompt: 'Just to be more informal, type your name here :D'
+        });
     }
 
     async defaultQuestionStep(step) {
-
         step.values.questionsInfo.user = step.result;
 
         await step.context.sendActivities([
-            {type:"message", text:"So " + step.values.questionsInfo.user + ", we need to definde the questions that would be sent to your teammates."},
-            {type:"message", text:"In order to ease you work i've prepared some default questions that you can use"},
-            {type:"message", text: questionsList.toString()},
-        ])
+            { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
+            { type: 'message', text: 'In order to ease you work i have prepared some default questions that you can use' },
+            { type: 'message', text: questionsList.toString() }
+        ]);
         return await step.prompt(TEXT_PROMPT, {
-            prompt: "Do you want to use these for you daily scrum?"
-        })
+            prompt: 'Do you want to use these for you daily scrum?'
+        });
     }
 
     async defineQuestionStep(step) {
         const userResponse = step.result;
-        
-        const client = new WebClient(process.env.SlackUserAccessToken,{
-            logLevel: LogLevel.DEBUG
-        })
 
-        if(userResponse == 'yes'){
-
+        if (userResponse === 'yes') {
             // Create an instance of Question object to send the message
-            const questionsInfo = new Question (
+            const questionsInfo = new Question(
                 step.values.questionsInfo.user,
                 questionsList
-            )
+            );
 
             await step.context.sendActivities([
-                {type:"message", text:"Nice we have done, i'll sent those questions to your teammates."},
-                {type:"message", text:"I'm glad to help you, have a nice day! :D"}
+                { type: 'message', text: 'Nice we have done, iam going to send those questions to your teammates.' },
+                { type: 'message', text: 'I am glad to help you, have a nice day! :D' }
             ]);
 
             // Function to sent private messages in slack channels
-            try{
+            try {
                 await client.chat.postMessage({
                     token: process.env.SlackUserAccessToken,
-                    channel: "C01JVNWH1GS",
+                    channel: 'C01JVNWH1GS',
                     text: questionsInfo.toString()
                 });
-            }catch(error){
+            } catch (error) {
                 console.error(error);
             }
             return await step.context.sendActivities([
-                {type:"message", text:"Questions sent, bye bye!"}
+                { type: 'message', text: 'Questions sent, bye bye!' }
             ]);
-
-        } else if(userResponse == 'no'){
-
+        } else if (userResponse === 'no') {
             await step.context.sendActivities([
-                {type:"message", text:"Ok, now you have to define your own questions."},
-                {type:"message", text:"Let's start with the first one, we'll proceed one question at a time"}
+                { type: 'message', text: 'Ok, now you have to define your own questions.' },
+                { type: 'message', text: 'Start with the first one, we will proceed one question at a time' }
             ]);
             return await step.beginDialog(QUESTIONS_DEFINITION_DIALOG);
         }
     }
 
-    async finalStep(){
+    async finalStep(step) {
         const list = step.result || [];
-
         // Create an instance of Question object to send the message
-        const questionsInfo = new Question (
+        const questionsInfo = new Question(
             step.values.questionsInfo.user,
             list
         );
 
         await step.context.sendActivities([
-            {type:"message", text:"Nice we have done, i'll sent those questions to your teammates:"},
-            {type:"message", text: questionsInfo.getQuestionsAsString() },
-            {type:"message", text:"I'm glad to help you, have a nice day! :D"}
+            { type: 'message', text: 'Nice we have done, i will send those questions to your teammates:' },
+            { type: 'message', text: questionsInfo.getQuestionsAsString() },
+            { type: 'message', text: 'I am glad to help you, have a nice day! :D' }
         ]);
 
         // Function to sent private messages in slack channels
-        try{
+        try {
             await client.chat.postMessage({
                 token: process.env.SlackUserAccessToken,
-                channel: "C01JVNWH1GS",
+                channel: 'C01JVNWH1GS',
                 text: questionsInfo.toString()
             });
-        }catch(error){
+        } catch (error) {
             console.error(error);
         }
         return await step.context.sendActivities([
-            {type:"message", text:"Questions sent, bye bye!"}
+            { type: 'message', text: 'Questions sent, bye bye!' }
         ]);
     }
 }
