@@ -19,6 +19,7 @@ class Question {
         } else {
             questionsString = questionsString.concat('No questions defined');
         }
+        return questionsString;
     }
 
     toString() {
