@@ -33,6 +33,8 @@ const client = new WebClient(process.env.SlackUserAccessToken, {
     logLevel: LogLevel.DEBUG
 });
 
+const channelsName = [];
+
 class ScrumDialog extends ComponentDialog {
     constructor(userState) {
         super(SCRUM_DIALOG);
@@ -101,7 +103,19 @@ class ScrumDialog extends ComponentDialog {
                 step.values.questionsInfo.user,
                 questionsList
             );
-
+            try {
+                const result = await client.conversations.list();
+                result.channels.forEach(function(conversation) {
+                    channelsName.push(conversation.name);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+            await step.context.sendActivities([
+                { type: 'message', text: 'Just one more step' },
+                { type: 'message', text: 'this is the list of all channels' },
+                { type: 'message', text: channelsName.toString() }
+            ]);
             await step.context.sendActivities([
                 { type: 'message', text: 'Nice we have done, iam going to send those questions to your teammates.' },
                 { type: 'message', text: 'I am glad to help you, have a nice day! :D' }
