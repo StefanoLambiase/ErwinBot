@@ -34,7 +34,7 @@ const client = new WebClient(process.env.SlackUserAccessToken, {
 });
 
 const channelsName = [];
-const allChannels = {};
+let allChannels = {};
 const channelSelected = '';
 let channelSelectedID = '';
 
@@ -92,7 +92,7 @@ class ScrumDialog extends ComponentDialog {
             const result = await client.conversations.list();
             result.channels.forEach(function(conversation) {
                 channelsName.push(conversation.name + '\n');
-                allChannels[conversation.name] = conversation;
+                allChannels = conversation;
             });
         } catch (error) {
             console.error(error);
