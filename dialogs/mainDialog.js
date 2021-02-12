@@ -114,13 +114,11 @@ class MainDialog extends ComponentDialog {
      * @param {*} step
      */
     async optionsStep(step) {
-        console.log(step.result);
-        console.log(step.result.value);
         // Set the activity.
         const reply = { type: ActivityTypes.Message };
 
         // Text from the previous step.
-        const specifiedOption = step.result.value;
+        const specifiedOption = step.result;
 
         // Luis result from LuisRecognizer.
         const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
