@@ -106,10 +106,10 @@ class ScrumDialog extends InterruptDialog {
             { type: 'message', text: 'this is the list of all channels' }
         ]);
 
-        const options = [];
+        const options = ['Test'];
         console.log('PRIMO loop');
         channelsName.forEach(async channel => {
-            options.push(channel.toString());
+            options.push(channel);
             console.log(typeof channel);
             await step.context.sendActivity(
                 channel
