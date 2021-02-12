@@ -116,9 +116,6 @@ class ScrumDialog extends InterruptDialog {
             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
         ), 2000));
 
-        // Clear the array
-        channelsName.length = 0;
-
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
             retryPrompt: 'Choose an option from the list',
@@ -127,6 +124,9 @@ class ScrumDialog extends InterruptDialog {
     }
 
     async defaultQuestionStep(step) {
+        // Clear the array
+        channelsName.length = 0;
+
         channelSelected = step.result;
         await step.context.sendActivities([
             { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
