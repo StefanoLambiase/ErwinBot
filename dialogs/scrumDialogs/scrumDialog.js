@@ -106,9 +106,11 @@ class ScrumDialog extends InterruptDialog {
             { type: 'message', text: 'this is the list of all channels' }
         ]);
 
+        const options = [];
         console.log('PRIMO loop');
         channelsName.forEach(async channel => {
             console.log(channel);
+            options.push(channel);
             await step.context.sendActivity(
                 channel
             );
@@ -120,7 +122,6 @@ class ScrumDialog extends InterruptDialog {
 
         console.log('PRIMA DELLA STAMPA');
         console.log(channelsName.toString());
-        const options = channelsName.toString();
 
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
