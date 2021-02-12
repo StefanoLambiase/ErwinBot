@@ -14,6 +14,10 @@ const {
     QuestionsDefinitionDialog
 } = require('./questionsDefinitionDialog');
 
+const {
+    InterruptDialog
+} = require('../interruptDialog');
+
 // Dialogs names
 const SCRUM_DIALOG = 'SCRUM_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
@@ -37,7 +41,7 @@ const channelsName = [];
 let channelSelected = '';
 let channelSelectedID = '';
 
-class ScrumDialog extends ComponentDialog {
+class ScrumDialog extends InterruptDialog {
     constructor(userState) {
         super(SCRUM_DIALOG);
 
