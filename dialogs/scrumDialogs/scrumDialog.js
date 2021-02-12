@@ -116,12 +116,10 @@ class ScrumDialog extends InterruptDialog {
             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
         ), 2000));
 
-        const options = ['yes', 'no'];
-
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
             retryPrompt: 'Choose an option from the list',
-            choices: options
+            choices: channelsName.toString()
         });
     }
 
