@@ -28,7 +28,7 @@ const {
 const { TicketDialog, TICKET_DIALOG } = require('./ticketDialogs/ticketDialog');
 
 // Imports for Slack
-const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
+const PresentationMessage = require('../botResources/slack/PresentationMessage.json');
 
 // Imports other dialogs
 const {
@@ -102,6 +102,12 @@ class MainDialog extends ComponentDialog {
             return await step.next();
         }
 
+        if (step.context.activity.channelId === 'slack') {
+            return await step.sendActivity({
+                channelData: PresentationMessage
+            });
+        };
+
         const messageText = step.options.restartMsg ? step.options.restartMsg : 'Write something to start';
         const welcomeMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
 
@@ -119,7 +125,7 @@ class MainDialog extends ComponentDialog {
         const reply = { type: ActivityTypes.Message };
 
         // Text from the previous step.
-        const specifiedOption = step.result;
+        const specifiedOption = step.result.value;
 
         // Luis result from LuisRecognizer.
         const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
@@ -130,14 +136,11 @@ class MainDialog extends ComponentDialog {
         tomorrow.setHours(16, 43, 0);
 
         // Part to select the dialogs.
-        if (specifiedOption === 'slack') {
+        if (specifiedOption === 'Start daily scrum') {
             return await step.beginDialog(SCRUM_DIALOG);
-        } else if (specifiedOption === 'bing') {
-            const query = 'Microsoft Cognitive Services';
-            bingSearch.bingWebSearch(query, true);
-        } else if (specifiedOption === 'info') {
+        } else if (specifiedOption === 'Info') {
             return await step.beginDialog(INFO_DIALOG);
-        } else if (specifiedOption === 'ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
+        } else if (specifiedOption === 'Open a ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             return await step.beginDialog(TICKET_DIALOG);
         } else {
             // The user did not enter input that this bot was built to handle.

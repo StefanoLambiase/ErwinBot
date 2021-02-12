@@ -1,0 +1,36 @@
+{
+    "attachments": [
+        {
+            "title": "Erwin Bot",
+            "author_name": "by Andrea Cupito & Stefano Lambiase",
+            "image_url": "../images/erwinImage.jpeg"
+        },
+        {
+            "fallback": "What i can do for you!",
+            "title": "What i can do for you!",
+            "callback_id": "comic_1234_xyz",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "actions": [
+                {
+                    "name": "Start daily scrum",
+                    "text": "Start daily scrum",
+                    "type": "button",
+                    "value": "Start daily scrum"
+                },
+                {
+                    "name": "Open a ticket",
+                    "text": "Open a ticket",
+                    "type": "button",
+                    "value": "Open a ticket"
+                },
+                {
+                    "name": "Info",
+                    "text": "Info",
+                    "type": "button",
+                    "value": "Info"
+                }
+            ]
+        }
+    ]
+}
