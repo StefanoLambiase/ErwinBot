@@ -1,9 +1,9 @@
 {
     "attachments": [
         {
-            "title": "Erwin Bot",
-            "author_name": "by Andrea Cupito & Stefano Lambiase",
-            "image_url": "../images/erwinImage.jpeg"
+            "title": "by Andrea Cupito & Stefano Lambiase",
+            "author_name": "Erwin Bot",
+            "image_url": "https://github.com/StefanoLambiase/ErwinBot/blob/develop/botResources/images/erwinImage.jpeg"
         },
         {
             "fallback": "What i can do for you!",

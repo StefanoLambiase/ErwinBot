@@ -114,6 +114,8 @@ class MainDialog extends ComponentDialog {
      * @param {*} step
      */
     async optionsStep(step) {
+        console.log(step.result);
+        console.log(step.result.value);
         // Set the activity.
         const reply = { type: ActivityTypes.Message };
 
