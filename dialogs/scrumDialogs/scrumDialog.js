@@ -91,6 +91,9 @@ class ScrumDialog extends InterruptDialog {
     }
 
     async selectChannel(step) {
+        if (channelsName.length !== 0) {
+            channelsName.length = 0;
+        }
         step.values.questionsInfo.user = step.result;
         // Retrieve the list with all slack channels
         try {
@@ -108,7 +111,6 @@ class ScrumDialog extends InterruptDialog {
 
         console.log('PRIMO loop');
         channelsName.forEach(async channel => {
-            console.log(typeof channel);
             await step.context.sendActivity(
                 channel
             );
@@ -118,14 +120,10 @@ class ScrumDialog extends InterruptDialog {
             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
         ), 2000));
 
-        console.log('PRIMA DELLA STAMPA');
-        console.log(channelsName);
-
-        const options = ['generale', 'casuale', 'test', 'yyyy'];
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
             retryPrompt: 'Choose an option from the list',
-            choices: options
+            choices: channelsName
         });
     }
 
@@ -133,7 +131,9 @@ class ScrumDialog extends InterruptDialog {
         // Clear the array
         channelsName.length = 0;
 
-        channelSelected = step.result;
+        channelSelected = step.result.value;
+        console.log(channelSelected);
+
         await step.context.sendActivities([
             { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
             { type: 'message', text: 'In order to ease you work i have prepared some default questions that you can use' }
@@ -149,13 +149,17 @@ class ScrumDialog extends InterruptDialog {
             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
         ), 2000));
 
-        return await step.prompt(TEXT_PROMPT, {
-            prompt: 'Do you want to use these for you daily scrum?'
+        const options = ['yes', 'no'];
+        return await step.prompt(CHOICE_PROMPT, {
+            prompt: 'Do you want to use these for you daily scrum?',
+            retryPrompt: 'Choose an option from the list',
+            choices: options
         });
     }
 
     async defineQuestionStep(step) {
-        const userResponse = step.result;
+        const userResponse = step.result.value;
+        console.log(userResponse);
 
         if (userResponse === 'yes') {
             // Create an instance of Question object to send the message
