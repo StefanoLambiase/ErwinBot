@@ -121,11 +121,10 @@ class ScrumDialog extends InterruptDialog {
         console.log('PRIMA DELLA STAMPA');
         console.log(channelsName);
 
-        const options = ['Test', 'Test', 'Test', 'Test', 'Test', 'Test']
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
             retryPrompt: 'Choose an option from the list',
-            choices: options
+            choices: channelsName
         });
     }
 
