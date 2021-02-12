@@ -119,12 +119,12 @@ class ScrumDialog extends InterruptDialog {
         ), 2000));
 
         console.log('PRIMA DELLA STAMPA');
-        console.log(channelsName);
+        console.log(channelsName.toString());
 
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
             retryPrompt: 'Choose an option from the list',
-            choices: channelsName
+            choices: channelsName.toString()
         });
     }
 
