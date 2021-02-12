@@ -106,20 +106,22 @@ class ScrumDialog extends InterruptDialog {
             { type: 'message', text: 'this is the list of all channels' }
         ]);
 
-        /* hannelsName.forEach(async channel => {
+        channelsName.forEach(async channel => {
             await step.context.sendActivity(
                 channel
             );
-        }); */
+        });
 
         await new Promise(resolve => setTimeout(() => resolve(
             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
         ), 2000));
 
+        const options = ['yes', 'no'];
+
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
             retryPrompt: 'Choose an option from the list',
-            choices: channelsName
+            choices: options
         });
     }
 
