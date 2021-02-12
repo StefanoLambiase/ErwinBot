@@ -2,6 +2,7 @@ const { WebClient, LogLevel } = require('@slack/web-api');
 
 const {
     TextPrompt,
+    ChoicePrompt,
     DialogSet,
     DialogTurnStatus,
     WaterfallDialog
@@ -21,6 +22,7 @@ const {
 const SCRUM_DIALOG = 'SCRUM_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
+const CHOICE_PROMPT = 'CHOICE_PROMPT';
 
 // Class import
 const { Question } = require('./model/question');
@@ -46,6 +48,7 @@ class ScrumDialog extends InterruptDialog {
 
         // Adding used dialogs
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+        this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
         this.addDialog(new QuestionsDefinitionDialog());
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
@@ -103,11 +106,11 @@ class ScrumDialog extends InterruptDialog {
             { type: 'message', text: 'this is the list of all channels' }
         ]);
 
-        channelsName.forEach(async channel => {
+        /* channelsName.forEach(async channel => {
             await step.context.sendActivity(
                 channel
             );
-        });
+        }); */
 
         await new Promise(resolve => setTimeout(() => resolve(
             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
@@ -116,8 +119,10 @@ class ScrumDialog extends InterruptDialog {
         // Clear the array
         channelsName.length = 0;
 
-        return await step.prompt(TEXT_PROMPT, {
-            prompt: 'Please type the name of the channel'
+        return await step.prompt(CHOICE_PROMPT, {
+            prompt: 'Please select one of the following channels',
+            retryPrompt: 'Choose an option from the list',
+            chioces: channelsName
         });
     }
 
