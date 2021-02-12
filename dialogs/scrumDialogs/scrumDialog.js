@@ -2,7 +2,6 @@ const { WebClient, LogLevel } = require('@slack/web-api');
 
 const {
     TextPrompt,
-    ComponentDialog,
     DialogSet,
     DialogTurnStatus,
     WaterfallDialog
