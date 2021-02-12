@@ -7,7 +7,6 @@ const ACData = require('adaptivecards-templating');
 const {
     TextPrompt,
     ChoicePrompt,
-    ComponentDialog,
     DialogSet,
     DialogTurnStatus,
     WaterfallDialog
@@ -21,6 +20,9 @@ const {
 const { Ticket } = require('./model/ticket');
 
 // Import others dialogs
+// Imports other dialogs
+const { InterruptDialog } = require('../interruptDialog');
+
 const { PossibilitiesDialog, POSSIBILITIES_DIALOG } = require('./possiblitiesDialog');
 const { SendEmailDialog, SEND_EMAIL_DIALOG } = require('./sendEmailDialog');
 const { BingSearchDialog, BING_SEARCH_DIALOG } = require('../bingSearchDialogs/bingSearchDialog');
@@ -38,7 +40,7 @@ const moment = require('moment');
  * Implements the functionality used to open a problem ticket.
  * The philosophy used for this interaction has been ispired by a Dale Carnagie book.
  */
-class TicketDialog extends ComponentDialog {
+class TicketDialog extends InterruptDialog {
     constructor(luisRecognizer, userState) {
         super(TICKET_DIALOG);
 
@@ -163,7 +165,7 @@ class TicketDialog extends ComponentDialog {
                                 attachments: [
                                     {
                                         title: 'Site name',
-                                        text: (index + 1) + '. ' + item.name
+                                        text: item.name
                                     },
                                     {
                                         fields: [
@@ -245,6 +247,11 @@ class TicketDialog extends ComponentDialog {
         const userChoice = stepContext.result.value;
 
         if (userChoice === 'Yes') {
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'Perfect, my job here is done! 😎' },
+                { type: 'message', text: 'Your interaction for the ticket **ends** here!' }
+            ]);
+
             return await stepContext.endDialog();
         } else {
             const message = 'What is the cause of the problem?';
