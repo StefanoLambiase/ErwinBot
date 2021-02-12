@@ -26,10 +26,10 @@ const TEXT_PROMPT = 'TEXT_PROMPT';
 const { Question } = require('./model/question');
 
 const questionsList = [
-    '   How do you feel today? \n',
-    '   What did you do since yesterday? \n',
-    '   What will you do today? \n',
-    '   Anything blocking your progress?'
+    'How do you feel today?',
+    'What did you do since yesterday?',
+    'What will you do today?',
+    'Anything blocking your progress?'
 ];
 
 const client = new WebClient(process.env.SlackUserAccessToken, {
@@ -100,9 +100,18 @@ class ScrumDialog extends InterruptDialog {
         }
         await step.context.sendActivities([
             { type: 'message', text: 'You have to select the channel in which you want to send the questions' },
-            { type: 'message', text: 'this is the list of all channels' },
-            { type: 'message', text: channelsName.toString() }
+            { type: 'message', text: 'this is the list of all channels' }
         ]);
+
+        channelsName.forEach(async channel => {
+            await step.context.sendActivity(
+                channel
+            );
+        });
+
+        await new Promise(resolve => setTimeout(() => resolve(
+            console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+        ), 2000));
 
         // Clear the array
         channelsName.length = 0;
@@ -116,9 +125,19 @@ class ScrumDialog extends InterruptDialog {
         channelSelected = step.result;
         await step.context.sendActivities([
             { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
-            { type: 'message', text: 'In order to ease you work i have prepared some default questions that you can use' },
-            { type: 'message', text: questionsList.toString() }
+            { type: 'message', text: 'In order to ease you work i have prepared some default questions that you can use' }
         ]);
+
+        questionsList.forEach(async question => {
+            await step.context.sendActivity(
+                question
+            );
+        });
+
+        await new Promise(resolve => setTimeout(() => resolve(
+            console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+        ), 2000));
+
         return await step.prompt(TEXT_PROMPT, {
             prompt: 'Do you want to use these for you daily scrum?'
         });
