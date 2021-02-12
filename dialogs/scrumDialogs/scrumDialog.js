@@ -96,7 +96,7 @@ class ScrumDialog extends InterruptDialog {
         try {
             const result = await client.conversations.list();
             result.channels.forEach(function(conversation) {
-                channelsName.push(conversation.name);
+                channelsName.push(conversation.name.toString());
             });
         } catch (error) {
             console.error(error);
@@ -119,7 +119,7 @@ class ScrumDialog extends InterruptDialog {
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
             retryPrompt: 'Choose an option from the list',
-            choices: channelsName.toString()
+            choices: channelsName
         });
     }
 
