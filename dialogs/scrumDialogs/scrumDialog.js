@@ -109,13 +109,6 @@ class ScrumDialog extends InterruptDialog {
             { type: 'message', text: 'this is the list of all channels' }
         ]);
 
-        console.log('PRIMO loop');
-        channelsName.forEach(async channel => {
-            await step.context.sendActivity(
-                channel
-            );
-        });
-
         await new Promise(resolve => setTimeout(() => resolve(
             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
         ), 2000));
@@ -132,7 +125,6 @@ class ScrumDialog extends InterruptDialog {
         channelsName.length = 0;
 
         channelSelected = step.result.value;
-        console.log(channelSelected);
 
         await step.context.sendActivities([
             { type: 'message', text: 'So ' + step.values.questionsInfo.user + ', we need to definde the questions that would be sent to your teammates.' },
@@ -141,7 +133,7 @@ class ScrumDialog extends InterruptDialog {
 
         questionsList.forEach(async question => {
             await step.context.sendActivity(
-                question
+                '**' + question + '**'
             );
         });
 
@@ -159,7 +151,6 @@ class ScrumDialog extends InterruptDialog {
 
     async defineQuestionStep(step) {
         const userResponse = step.result.value;
-        console.log(userResponse);
 
         if (userResponse === 'yes') {
             // Create an instance of Question object to send the message
