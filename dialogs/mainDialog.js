@@ -96,7 +96,7 @@ class MainDialog extends ComponentDialog {
         }
 
         if (step.context.activity.channelId === 'slack') {
-            return await step.sendActivity({
+            return await step.context.sendActivity({
                 channelData: PresentationMessage
             });
         };
