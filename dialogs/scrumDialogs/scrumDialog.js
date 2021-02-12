@@ -121,7 +121,7 @@ class ScrumDialog extends InterruptDialog {
         console.log('PRIMA DELLA STAMPA');
         console.log(channelsName);
 
-        const options = ['generale', 'casuale', 'test-a-bot-for-an-exam', 'test', 'yyyy'];
+        const options = ['generale', 'casuale', 'test', 'yyyy'];
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Please select one of the following channels',
             retryPrompt: 'Choose an option from the list',
