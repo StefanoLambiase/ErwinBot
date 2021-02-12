@@ -1,10 +1,3 @@
-// Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
-const { WebClient, LogLevel } = require('@slack/web-api');
-
-
-const bingSearch = require('../utils/bingSearch');
-
-
 // Import required types from libraries
 const {
     ActivityTypes,

@@ -2,9 +2,6 @@
 
 const { ActivityHandler } = require('botbuilder');
 
-// Imports for Slack
-const SampleFidelityMessage = require('../botResources/slack/SampleFidelityMessage.json');
-
 class ErwinBot extends ActivityHandler {
     constructor(conversationState, userState, dialog) {
         super();
@@ -37,8 +34,7 @@ class ErwinBot extends ActivityHandler {
                     await context.sendActivities([
                         { type: 'message', text: welcomeText },
                         { type: 'message', text: presentationText },
-                        { type: 'message', text: aggressiveText },
-                        { channelData: SampleFidelityMessage }
+                        { type: 'message', text: aggressiveText }
                     ]);
                 }
             }
