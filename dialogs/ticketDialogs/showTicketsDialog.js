@@ -19,6 +19,9 @@ const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
 
+/**
+ * Implements the interaction used to show to a user all the tickets directed to him/her.
+ */
 class ShowTicketsDialog extends InterruptDialog {
     constructor(luisRecognizer) {
         super(SHOW_TICKETS_DIALOG);
@@ -70,6 +73,10 @@ class ShowTicketsDialog extends InterruptDialog {
         });
     }
 
+    /**
+     * Implement the final step of the dialog.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async loopStep(stepContext) {
         console.log('**SHOW TICKETS DIALOG: loopStep**');
 
