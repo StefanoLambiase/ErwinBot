@@ -25,6 +25,12 @@
                     "value": "Open a ticket"
                 },
                 {
+                    "name": "Show tickets",
+                    "text": "Show tickets",
+                    "type": "button",
+                    "value": "Show tickets"
+                },
+                {
                     "name": "Info",
                     "text": "Info",
                     "type": "button",

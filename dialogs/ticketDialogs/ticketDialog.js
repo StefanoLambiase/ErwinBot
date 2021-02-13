@@ -3,6 +3,7 @@ const { ActivityTypes, CardFactory } = require('botbuilder');
 
 // Import for Adaptive Card templating.
 const ACData = require('adaptivecards-templating');
+const searchResultTicketCard = require('../../botResources/adaptiveCardStructures/searchResultTicketCard.json');
 
 const {
     TextPrompt,
@@ -15,6 +16,8 @@ const {
 const {
     LuisRecognizer
 } = require('botbuilder-ai');
+
+const moment = require('moment');
 
 // Import models
 const { Ticket } = require('./model/ticket');
@@ -32,9 +35,6 @@ const TICKET_DIALOG = 'TICKET_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
-
-const searchResultTicketCard = require('../../botResources/adaptiveCardStructures/searchResultTicketCard.json');
-const moment = require('moment');
 
 /**
  * Implements the functionality used to open a problem ticket.

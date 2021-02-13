@@ -17,13 +17,13 @@ const {
     LuisRecognizer
 } = require('botbuilder-ai');
 
-// Imports for others dialogs
-const { TicketDialog, TICKET_DIALOG } = require('./ticketDialogs/ticketDialog');
-
 // Imports for Slack
 const PresentationMessage = require('../botResources/slack/PresentationMessage.json');
 
 // Imports other dialogs
+const { TicketDialog, TICKET_DIALOG } = require('./ticketDialogs/ticketDialog');
+const { ShowTicketsDialog, SHOW_TICKETS_DIALOG } = require('./ticketDialogs/showTicketsDialog');
+
 const {
     SCRUM_DIALOG,
     ScrumDialog
@@ -59,6 +59,7 @@ class MainDialog extends ComponentDialog {
         this.addDialog(new ScrumDialog());
         this.addDialog(new InfoDialog());
         this.addDialog(new TicketDialog(luisRecognizer, userState));
+        this.addDialog(new ShowTicketsDialog(luisRecognizer));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
@@ -123,16 +124,13 @@ class MainDialog extends ComponentDialog {
         // Luis result from LuisRecognizer.
         const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
 
-        // Unix timestamp for tomorrow morning at 9AM
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate());
-        tomorrow.setHours(16, 43, 0);
-
         // Part to select the dialogs.
         if (specifiedOption === 'Start daily scrum') {
             return await step.beginDialog(SCRUM_DIALOG);
         } else if (specifiedOption === 'Info') {
             return await step.beginDialog(INFO_DIALOG);
+        } else if (specifiedOption === 'Show tickets') {
+            return await step.beginDialog(SHOW_TICKETS_DIALOG);
         } else if (specifiedOption === 'Open a ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             return await step.beginDialog(TICKET_DIALOG);
         } else {
