@@ -403,7 +403,7 @@ class TicketDialog extends InterruptDialog {
     }
 
     /**
-     * Implements the interaction closing.
+     * Implements the interaction close.
      * @param {*} stepContext - The context from previous interactions with the user.
      */
     async closingStep(stepContext) {

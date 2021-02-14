@@ -12,6 +12,7 @@ const { InterruptDialog } = require('../interruptDialog');
 
 // Import models
 const { Ticket } = require('./model/ticket');
+const { TicketDAO } = require('./model/ticketDAO');
 
 // Dialogs names
 const SHOW_TICKETS_DIALOG = 'SHOW_TICKETS_DIALOG';
@@ -95,12 +96,18 @@ class ShowTicketsDialog extends InterruptDialog {
         const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
         if (emailInserted.match(regexEmail)) {
+            const ticketDAO = new TicketDAO();
             if (stepContext.context.activity.channelId === 'slack') {
                 reply = 'This feature on Slack isn\'t implemented yet';
-                return await stepContext.context.sendActivity(reply);
+                await stepContext.context.sendActivity(reply);
+                return await stepContext.endDialog();
             } else {
-                reply = 'This feature is not implemented yet';
-                return await stepContext.context.sendActivity(reply);
+                const tickets = await ticketDAO.findTicketsByManagerEmail(emailInserted);
+                console.log('Tickets that I have found: ' + tickets);
+
+                reply = 'These are the tickets that I have found.';
+                await stepContext.context.sendActivity(reply);
+                return await stepContext.endDialog();
             }
         } else {
             reply = 'The email inserted doesn\'t match the email format. Please retry.';
