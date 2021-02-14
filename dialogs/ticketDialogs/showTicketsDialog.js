@@ -118,11 +118,11 @@ class ShowTicketsDialog extends InterruptDialog {
                     const template = new ACData.Template(ticketCard);
 
                     let solutionsString = '';
-                    await item.problemPossibilities.forEach(async (item2, index2) => {
+                    await item.problemPossibilities.forEach((item2, index2) => {
                         solutionsString = solutionsString + index2 + '. ' + item2 + '\n';
                     });
 
-                    const card = template.expand({
+                    const card = await template.expand({
                         $root: {
                             index: index + 1,
                             sender: item.user,
@@ -142,7 +142,7 @@ class ShowTicketsDialog extends InterruptDialog {
                     if (stepContext.context.activity.channelId === 'slack') {
                         await new Promise(resolve => setTimeout(() => resolve(
                             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-                        ), 1000));
+                        ), 2000));
                     }
                 });
 
@@ -150,7 +150,7 @@ class ShowTicketsDialog extends InterruptDialog {
                 if (stepContext.context.activity.channelId === 'slack') {
                     await new Promise(resolve => setTimeout(() => resolve(
                         console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-                    ), 3000));
+                    ), 5000));
                 }
             }
 
