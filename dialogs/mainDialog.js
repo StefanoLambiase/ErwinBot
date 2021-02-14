@@ -102,7 +102,7 @@ class MainDialog extends ComponentDialog {
             });
         }
 
-        const messageText = step.options.restartMsg ? step.options.restartMsg : 'Write something to start';
+        const messageText = step.options.restartMsg ? step.options.restartMsg : 'Write something to start or press one of the above buttons';
         const welcomeMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
 
         return await step.prompt(TEXT_PROMPT, {
