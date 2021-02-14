@@ -21,6 +21,7 @@ const moment = require('moment');
 
 // Import models
 const { Ticket } = require('./model/ticket');
+const { TicketDAO } = require('./model/ticketDAO');
 
 // Import others dialogs
 // Imports other dialogs
@@ -407,6 +408,16 @@ class TicketDialog extends InterruptDialog {
      */
     async closingStep(stepContext) {
         console.log('**TICKET DIALOG: closingStep**\n');
+
+        const emailInserted = stepContext.result || '';
+        // If the user have sent an email in the previous step, the bot saves the ticket into the DB.
+        if (emailInserted !== '') {
+            const ticketInfo = stepContext.values.ticketInfo;
+            // Save the ticket into the  mongo DB;
+            ticketInfo.managerEmail = emailInserted;
+            const ticketDAO = new TicketDAO();
+            await ticketDAO.insertDocument(ticketInfo);
+        }
 
         await stepContext.context.sendActivities([
             { type: 'message', text: 'Perfect, my job here is done! 😎' },
