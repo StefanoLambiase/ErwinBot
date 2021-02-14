@@ -1,14 +1,21 @@
-
+// Imports for mongo.
 var { MongoClient } = require('mongodb');
 var connectionString = process.env.MongoConnectionString;
 var dbName = process.env.MongoDBName;
 
+/**
+ * Implements the logic to access the DB for the ticket operation.
+ */
 class TicketDAO {
     // Useless constructor.
     constructor() {
         this.id = 'id';
     }
 
+    /**
+     * Implements the logic that insert a ticket in the DB.
+     * @param {Ticket} data - The Ticket object to save in the DB.
+     */
     async insertDocument(data) {
         const client = await new MongoClient(connectionString);
         try {
@@ -25,6 +32,10 @@ class TicketDAO {
         }
     }
 
+    /**
+     * Implements the logic that find all the tickets by the receiver email.
+     * @param {String} managerEmail - The receiver email.
+     */
     async findTicketsByManagerEmail(managerEmail) {
         const client = await new MongoClient(connectionString);
         try {

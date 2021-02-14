@@ -194,6 +194,10 @@ class TicketDialog extends InterruptDialog {
                             }
                         }
                     );
+
+                    await new Promise(resolve => setTimeout(() => resolve(
+                        console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+                    ), 2000));
                 });
             } else {
                 await responseAsJSON.webPages.value.forEach(async (item, index) => {
@@ -202,7 +206,7 @@ class TicketDialog extends InterruptDialog {
 
                     const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
 
-                    const card = template.expand({
+                    const card = await template.expand({
                         $root: {
                             title: item.name,
                             lastCrawled: date.toString(),
