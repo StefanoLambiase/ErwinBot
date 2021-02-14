@@ -1,3 +1,11 @@
+// Import required types from libraries
+const { ActivityTypes, CardFactory } = require('botbuilder');
+
+// Import for Adaptive Card templating.
+const ACData = require('adaptivecards-templating');
+const ticketCard = require('../../botResources/adaptiveCardStructures/ticketCard.json');
+
+// Imports for dialogs.
 const {
     TextPrompt,
     ChoicePrompt,
@@ -11,7 +19,6 @@ const { LuisRecognizer } = require('botbuilder-ai');
 const { InterruptDialog } = require('../interruptDialog');
 
 // Import models
-const { Ticket } = require('./model/ticket');
 const { TicketDAO } = require('./model/ticketDAO');
 
 // Dialogs names
@@ -92,26 +99,68 @@ class ShowTicketsDialog extends InterruptDialog {
         }
 
         // Check if the email inserted match the email format.
-        let reply = '';
         const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
         if (emailInserted.match(regexEmail)) {
             const ticketDAO = new TicketDAO();
-            if (stepContext.context.activity.channelId === 'slack') {
-                reply = 'This feature on Slack isn\'t implemented yet';
-                await stepContext.context.sendActivity(reply);
-                return await stepContext.endDialog();
-            } else {
-                const tickets = await ticketDAO.findTicketsByManagerEmail(emailInserted);
-                console.log('Tickets that I have found: ' + tickets);
 
-                reply = 'These are the tickets that I have found.';
-                await stepContext.context.sendActivity(reply);
-                return await stepContext.endDialog();
+            // Sends the tickets to the user as adaptive cards.
+            const tickets = await ticketDAO.findTicketsByManagerEmail(emailInserted);
+
+            // Check if there are tickets for the user.
+            if (tickets.length === 0) {
+                await stepContext.context.sendActivity('There aren\'t tickets for you!');
+            } else {
+                await stepContext.context.sendActivity('These are the tickets that I have found.');
+
+                await tickets.forEach(async (item, index) => {
+                    // Create a Template instance from the template payload
+                    const template = new ACData.Template(ticketCard);
+
+                    let solutionsString = '';
+                    await item.problemPossibilities.forEach(async (item2, index2) => {
+                        solutionsString = solutionsString + index2 + '. ' + item2 + '\n';
+                    });
+
+                    const card = template.expand({
+                        $root: {
+                            index: index + 1,
+                            sender: item.user,
+                            problem: item.problemDefinition,
+                            cause: item.problemCause,
+                            solutions: solutionsString,
+                            favouriteSolution: item.problemSolution
+                        }
+                    });
+
+                    const cardMessage = { type: ActivityTypes.Message };
+                    cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+
+                    await stepContext.context.sendActivity(cardMessage);
+
+                    // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
+                    if (stepContext.context.activity.channelId === 'slack') {
+                        await new Promise(resolve => setTimeout(() => resolve(
+                            console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+                        ), 1000));
+                    }
+                });
+
+                // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
+                if (stepContext.context.activity.channelId === 'slack') {
+                    await new Promise(resolve => setTimeout(() => resolve(
+                        console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+                    ), 3000));
+                }
             }
+
+            await stepContext.context.sendActivities([
+                { type: 'message', text: 'Perfect, my job here is done! 😎' },
+                { type: 'message', text: 'Your interaction for the ticket **ends** here!' }
+            ]);
+            return await stepContext.endDialog();
         } else {
-            reply = 'The email inserted doesn\'t match the email format. Please retry.';
-            await stepContext.context.sendActivity(reply);
+            await stepContext.context.sendActivity('The email inserted doesn\'t match the email format. Please retry.');
 
             // Repeat the dialog from the beginning.
             return await stepContext.replaceDialog(SHOW_TICKETS_DIALOG);
