@@ -2,7 +2,6 @@
 const {
     ActivityTypes,
     MessageFactory,
-    ChoicePrompt,
     InputHints
 } = require('botbuilder');
 
@@ -10,6 +9,7 @@ const {
     TextPrompt,
     ComponentDialog,
     DialogSet,
+    ChoicePrompt,
     DialogTurnStatus,
     WaterfallDialog
 } = require('botbuilder-dialogs');
