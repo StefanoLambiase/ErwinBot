@@ -158,6 +158,9 @@ class MainDialog extends ComponentDialog {
         if (step.result.value === 'yes') {
             return await step.replaceDialog(this.id);
         } else {
+            await step.context.sendActivity(
+                'Bye Bye'
+            );
             return await step.endDialog();
         }
     }
