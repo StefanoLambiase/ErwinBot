@@ -2,6 +2,7 @@
 const {
     ActivityTypes,
     MessageFactory,
+    ChoicePrompt,
     InputHints
 } = require('botbuilder');
 
@@ -39,6 +40,7 @@ const MAIN_DIALOG = 'MAIN_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 const USER_PROFILE_PROPERTY = 'USER_PROFILE_PROPERTY';
+const CHOICE_PROMPT = 'CHOICE_PROMPT';
 
 /**
  * Implement the first dialog in the chain.
@@ -55,6 +57,7 @@ class MainDialog extends ComponentDialog {
         //  Add used dialog.
         // ! if you want to add a new dialog in the steps, first add it here.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
+        this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
         this.addDialog(new ScrumDialog());
         this.addDialog(new InfoDialog());
@@ -64,6 +67,7 @@ class MainDialog extends ComponentDialog {
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
             this.optionsStep.bind(this),
+            this.waitStep.bind(this),
             this.loopStep.bind(this)
         ]));
 
@@ -142,8 +146,20 @@ class MainDialog extends ComponentDialog {
         return await step.replaceDialog(this.id);
     }
 
+    async waitStep(step) {
+        return await step.prompt(CHOICE_PROMPT, {
+            prompt: 'Do you want to continue?',
+            retryPrompt: 'Please select one of the following options',
+            choices: ['yes', 'no']
+        });
+    }
+
     async loopStep(step) {
-        return await step.replaceDialog(this.id);
+        if (step.result.value === 'yes') {
+            return await step.replaceDialog(this.id);
+        } else {
+            return await step.endDialog();
+        }
     }
 }
 
