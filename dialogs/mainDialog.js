@@ -119,19 +119,19 @@ class MainDialog extends ComponentDialog {
         const reply = { type: ActivityTypes.Message };
 
         // Text from the previous step.
-        const specifiedOption = step.result;
+        const specifiedOption = (step.result).toLowerCase();
 
         // Luis result from LuisRecognizer.
         const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
 
         // Part to select the dialogs.
-        if (specifiedOption === 'Start daily scrum') {
+        if (specifiedOption === 'start daily scrum') {
             return await step.beginDialog(SCRUM_DIALOG);
-        } else if (specifiedOption === 'Info') {
+        } else if (specifiedOption === 'info') {
             return await step.beginDialog(INFO_DIALOG);
-        } else if (specifiedOption === 'Show tickets') {
+        } else if (specifiedOption === 'show tickets') {
             return await step.beginDialog(SHOW_TICKETS_DIALOG);
-        } else if (specifiedOption === 'Open a ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
+        } else if (specifiedOption === 'open a ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
             return await step.beginDialog(TICKET_DIALOG);
         } else {
             // The user did not enter input that this bot was built to handle.
