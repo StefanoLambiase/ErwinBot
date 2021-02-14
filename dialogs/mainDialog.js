@@ -100,7 +100,7 @@ class MainDialog extends ComponentDialog {
             await step.context.sendActivity({
                 channelData: PresentationMessage
             });
-        };
+        }
 
         const messageText = step.options.restartMsg ? step.options.restartMsg : 'Write something to start';
         const welcomeMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
