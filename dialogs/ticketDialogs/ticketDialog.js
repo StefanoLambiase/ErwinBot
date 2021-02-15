@@ -217,7 +217,6 @@ class TicketDialog extends InterruptDialog {
 
                     const cardMessage = { type: ActivityTypes.Message };
                     cardMessage.attachments = [CardFactory.adaptiveCard(card)];
-
                     await stepContext.context.sendActivity(cardMessage);
                 });
             }

@@ -1,9 +1,9 @@
 // Import required types from libraries
-const {
-    ActivityTypes,
-    MessageFactory,
-    InputHints
-} = require('botbuilder');
+const { ActivityTypes, CardFactory } = require('botbuilder');
+
+// Import for Adaptive Card templating.
+const ACData = require('adaptivecards-templating');
+const boardCard = require('../../botResources/adaptiveCardStructures/trelloCards/boardCard.json');
 
 const {
     TextPrompt,
@@ -17,6 +17,11 @@ const {
     LuisRecognizer
 } = require('botbuilder-ai');
 
+// Import utils.
+const trelloAdapter = require('./ticketUtils/trelloAdapter');
+const moment = require('moment');
+
+// Import dialogs
 const { InterruptDialog } = require('../interruptDialog');
 
 // Dialogs names
@@ -95,17 +100,25 @@ class TrelloMainDialog extends InterruptDialog {
 
         // Part to select the dialogs.
         if (specifiedOption === 'get my cards') {
-            await stepContext.context.sendActivity('Get my cards!');
-            return await stepContext.next();
+            const responseAsJSON = await trelloAdapter.getAllMyCards();
+            if (responseAsJSON !== undefined) {
+                
+            } else {
+                await stepContext.context.sendActivity('Sorry! There are problems with Trello! Retry later.');
+            }
         } else if (specifiedOption === 'get my boards') {
-            await stepContext.context.sendActivity('Get my boards!');
-            return await stepContext.next();
+            const responseAsJSON = await trelloAdapter.getAllMyBoards();
+            if (responseAsJSON !== undefined) {
+                await printBoards(stepContext, responseAsJSON);
+            } else {
+                await stepContext.context.sendActivity('Sorry! There are problems with Trello! Retry later.');
+            }
         } else {
             // The user did not enter input that this bot was built to handle.
             await stepContext.context.sendActivity('Sorry! I can\'t recognize your command. Retry!');
         }
 
-        return await stepContext.replaceDialog(this.id);
+        return await stepContext.next();
     }
 
     /**
@@ -139,6 +152,75 @@ class TrelloMainDialog extends InterruptDialog {
             return await stepContext.endDialog();
         }
     }
+}
+
+/**
+ * Prints in chat the boards found in the http request.
+ * @param {*} stepContext - The context from previous interactions with the user.
+ * @param {string} responseAsJSON - The boards list as JSON.
+ */
+async function printBoards(stepContext, responseAsJSON) {
+    console.log('**TRELLO MAIN DIALOG: printBoards**\n');
+
+    if (stepContext.context.activity.channelId === 'slack') {
+        await responseAsJSON.forEach(async (item, index) => {
+            await stepContext.context.sendActivity(
+                {
+                    channelData: {
+                        text: 'Card number ' + index,
+                        attachments: [
+                            {
+                                title: 'Board Name',
+                                text: item.name
+                            },
+                            {
+                                title: 'Description',
+                                text: item.desc
+                            },
+                            {
+                                title: 'Last update',
+                                text: moment(item.dateLastActivity).format('MMMM Do YYYY, h:mm:ss a')
+                            },
+                            {
+                                title: 'Link to the board',
+                                text: item.url
+                            }
+                        ]
+                    }
+                }
+            );
+
+            await new Promise(resolve => setTimeout(() => resolve(
+                console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+            ), 2000));
+        });
+    } else {
+        await responseAsJSON.forEach(async (item, index) => {
+            // Create a Template instance from the template payload
+            const template = new ACData.Template(boardCard);
+
+            const date = moment(item.dateLastActivity).format('MMMM Do YYYY, h:mm:ss a');
+
+            const card = await template.expand({
+                $root: {
+                    index: index + 1,
+                    name: item.name,
+                    url: item.url,
+                    desc: item.desc,
+                    dateLastActivity: date.toString()
+                }
+            });
+
+            // Send the card.
+            const cardMessage = { type: ActivityTypes.Message };
+            cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+            await stepContext.context.sendActivity(cardMessage);
+        });
+    }
+
+    await new Promise(resolve => setTimeout(() => resolve(
+        console.log('Wait 4 seconds after boards print.')
+    ), 3000));
 }
 
 module.exports.TrelloMainDialog = TrelloMainDialog;
