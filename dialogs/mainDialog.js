@@ -36,6 +36,11 @@ const {
     InfoDialog
 } = require('./infoDialogs/infoDialog');
 
+const {
+    JIRA_MAIN_DIALOG,
+    JiraMainDialog
+} = require('./jiraDialogs/jiraMainDialog');
+
 // Dialogs names
 const MAIN_DIALOG = 'MAIN_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
@@ -65,6 +70,7 @@ class MainDialog extends ComponentDialog {
         this.addDialog(new TicketDialog(luisRecognizer, userState));
         this.addDialog(new ShowTicketsDialog(luisRecognizer));
         this.addDialog(new TrelloMainDialog(luisRecognizer, userState));
+        this.addDialog(new JiraMainDialog(userState));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
@@ -132,11 +138,13 @@ class MainDialog extends ComponentDialog {
 
         // Part to select the dialogs.
         if (specifiedOption === 'start daily scrum') {
-            return await step.beginDialog(SCRUM_DIALOG);
+            return await step.beginDialog(SCRUM_DIALOG || LuisRecognizer.topIntent(luisResult) === 'select daily scrum');
         } else if (specifiedOption === 'info') {
-            return await step.beginDialog(INFO_DIALOG);
+            return await step.beginDialog(INFO_DIALOG || LuisRecognizer.topIntent(luisResult) === 'select information');
         } else if (specifiedOption === 'trello') {
             return await step.beginDialog(TRELLO_MAIN_DIALOG);
+        } else if (specifiedOption === 'jira') {
+            return await step.beginDialog(JIRA_MAIN_DIALOG);
         } else if (specifiedOption === 'show tickets' || LuisRecognizer.topIntent(luisResult) === 'show tickets') {
             return await step.beginDialog(SHOW_TICKETS_DIALOG);
         } else if (specifiedOption === 'open a ticket' || LuisRecognizer.topIntent(luisResult) === 'open a ticket') {
