@@ -11,6 +11,7 @@ class ErwinRecognizer {
             this.recognizer = new LuisRecognizer(config, recognizerOptions);
         }
     }
+
     get isConfigured() {
         return (this.recognizer !== undefined);
     }
