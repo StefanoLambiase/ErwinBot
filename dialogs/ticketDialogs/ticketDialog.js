@@ -5,6 +5,8 @@ const { ActivityTypes, CardFactory } = require('botbuilder');
 const ACData = require('adaptivecards-templating');
 const searchResultTicketCard = require('../../botResources/adaptiveCardStructures/searchResultTicketCard.json');
 
+const moment = require('moment');
+
 const {
     TextPrompt,
     ChoicePrompt,
@@ -17,13 +19,10 @@ const {
     LuisRecognizer
 } = require('botbuilder-ai');
 
-const moment = require('moment');
-
 // Import models
 const { Ticket } = require('./model/ticket');
 const { TicketDAO } = require('./model/ticketDAO');
 
-// Import others dialogs
 // Imports other dialogs
 const { InterruptDialog } = require('../interruptDialog');
 
@@ -393,7 +392,8 @@ class TicketDialog extends InterruptDialog {
         if (userInput === 'done') {
             console.log('Well done');
             // Exit the dialog.
-            return await stepContext.context.sendActivity('Well done! This means that the strategy works!!!');
+            await stepContext.context.sendActivity('Well done! This means that the strategy works!!!');
+            return await stepContext.next();
         } else {
             // Create the ticket object.
             const ticketInfo = stepContext.values.ticketInfo;
