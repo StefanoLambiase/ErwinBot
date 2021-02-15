@@ -24,6 +24,7 @@
         "botbuilder": "~4.11.0",
         "botbuilder-ai": "^4.11.1",
         "dotenv": "^8.2.0",
+        "jira-connector": "^3.1.0",
         "moment": "^2.29.1",
         "mongodb": "^3.6.4",
         "nodemailer": "^6.4.17",
