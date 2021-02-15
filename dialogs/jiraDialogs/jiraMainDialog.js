@@ -58,7 +58,7 @@ class JiraMainDialog extends InterruptDialog {
     async retrieveIssueStep(step) {
         const jiraIssue = await jira.issue.getIssue({ issueKey: 'ER-1' });
         return await step.context.sendActivity(
-            jiraIssue.toString()
+            jiraIssue
         );
     }
 }

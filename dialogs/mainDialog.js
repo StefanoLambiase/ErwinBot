@@ -137,10 +137,10 @@ class MainDialog extends ComponentDialog {
         const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
 
         // Part to select the dialogs.
-        if (specifiedOption === 'start daily scrum') {
-            return await step.beginDialog(SCRUM_DIALOG || LuisRecognizer.topIntent(luisResult) === 'select daily scrum');
-        } else if (specifiedOption === 'info') {
-            return await step.beginDialog(INFO_DIALOG || LuisRecognizer.topIntent(luisResult) === 'select information');
+        if (specifiedOption === 'start daily scrum' || LuisRecognizer.topIntent(luisResult) === 'select daily scrum') {
+            return await step.beginDialog(SCRUM_DIALOG);
+        } else if (specifiedOption === 'info' || LuisRecognizer.topIntent(luisResult) === 'select information') {
+            return await step.beginDialog(INFO_DIALOG);
         } else if (specifiedOption === 'trello') {
             return await step.beginDialog(TRELLO_MAIN_DIALOG);
         } else if (specifiedOption === 'jira') {
