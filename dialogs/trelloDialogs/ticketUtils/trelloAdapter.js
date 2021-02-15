@@ -49,7 +49,9 @@ async function getAllMyBoards() {
     console.log('TRELLO ADAPTER - getAllBoards');
 
     try {
-        const url = 'https://api.trello.com/1/members/me/boards?key=' + apiKey + '&token=' + token;
+        let url = 'https://api.trello.com/1/members/me/boards';
+        url = url + '?key=' + apiKey + '&token=' + token;
+
         const httpPromise = executeTrelloCall(url);
         const responseBody = await httpPromise;
 
@@ -63,7 +65,20 @@ async function getAllMyBoards() {
  * Returns all the user's card as a JSON.
  */
 async function getAllMyCards() {
-    return undefined;
+    console.log('TRELLO ADAPTER - getAllCards');
+
+    try {
+        const boardId = '5fff0ca2ff279e4298376d65';
+        let url = 'https://api.trello.com/1/boards/' + boardId + '/cards';
+        url = url + '?key=' + apiKey + '&token=' + token;
+
+        const httpPromise = executeTrelloCall(url);
+        const responseBody = await httpPromise;
+
+        return responseBody;
+    } catch {
+        return undefined;
+    }
 }
 
 module.exports = { getAllMyBoards, getAllMyCards };
