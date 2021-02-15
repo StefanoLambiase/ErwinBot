@@ -133,9 +133,9 @@ class MainDialog extends ComponentDialog {
             return await step.beginDialog(SCRUM_DIALOG);
         } else if (specifiedOption === 'info') {
             return await step.beginDialog(INFO_DIALOG);
-        } else if (specifiedOption === 'show tickets') {
+        } else if (specifiedOption === 'show tickets' || LuisRecognizer.topIntent(luisResult) === 'show tickets') {
             return await step.beginDialog(SHOW_TICKETS_DIALOG);
-        } else if (specifiedOption === 'open a ticket' || LuisRecognizer.topIntent(luisResult) === 'Ticketing') {
+        } else if (specifiedOption === 'open a ticket' || LuisRecognizer.topIntent(luisResult) === 'open a ticket') {
             return await step.beginDialog(TICKET_DIALOG);
         } else {
             // The user did not enter input that this bot was built to handle.
