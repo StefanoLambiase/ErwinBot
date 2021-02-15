@@ -31,6 +31,12 @@
                     "value": "Show tickets"
                 },
                 {
+                    "name": "Jira",
+                    "text": "Jira",
+                    "type": "button",
+                    "value": "Jira"
+                },
+                {
                     "name": "Info",
                     "text": "Info",
                     "type": "button",
