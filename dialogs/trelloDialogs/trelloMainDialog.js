@@ -81,7 +81,7 @@ class TrelloMainDialog extends InterruptDialog {
         return await stepContext.prompt(CHOICE_PROMPT, {
             prompt: 'What do you want to do?',
             retryPrompt: 'Please choose an option from the list.',
-            choices: ['Get my cards', 'Get my boards']
+            choices: ['Get my boards']
         });
     }
 
@@ -100,7 +100,7 @@ class TrelloMainDialog extends InterruptDialog {
 
         // Part to select the dialogs.
         if (specifiedOption === 'get my cards') {
-            const responseAsJSON = await trelloAdapter.getAllMyCards();
+            const responseAsJSON = await trelloAdapter.getAllCardsInBoard();
             if (responseAsJSON !== undefined) {
                 await printCards(stepContext, responseAsJSON);
             } else {
@@ -229,7 +229,7 @@ async function printBoards(stepContext, responseAsJSON) {
 
     await new Promise(resolve => setTimeout(() => resolve(
         console.log('Wait 4 seconds after boards print.')
-    ), 3000));
+    ), 2000));
 }
 
 module.exports.TrelloMainDialog = TrelloMainDialog;

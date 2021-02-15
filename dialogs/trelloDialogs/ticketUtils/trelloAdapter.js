@@ -64,11 +64,10 @@ async function getAllMyBoards() {
 /**
  * Returns all the user's card as a JSON.
  */
-async function getAllMyCards() {
+async function getAllCardsInBoard(boardId) {
     console.log('TRELLO ADAPTER - getAllCards');
 
     try {
-        const boardId = '5fff0ca2ff279e4298376d65';
         let url = 'https://api.trello.com/1/boards/' + boardId + '/cards';
         url = url + '?key=' + apiKey + '&token=' + token;
 
@@ -81,4 +80,4 @@ async function getAllMyCards() {
     }
 }
 
-module.exports = { getAllMyBoards, getAllMyCards };
+module.exports = { getAllMyBoards, getAllCardsInBoard };
