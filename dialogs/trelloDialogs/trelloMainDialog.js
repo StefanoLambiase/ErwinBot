@@ -102,7 +102,7 @@ class TrelloMainDialog extends InterruptDialog {
         if (specifiedOption === 'get my cards') {
             const responseAsJSON = await trelloAdapter.getAllMyCards();
             if (responseAsJSON !== undefined) {
-                
+                await printCards(stepContext, responseAsJSON);
             } else {
                 await stepContext.context.sendActivity('Sorry! There are problems with Trello! Retry later.');
             }
@@ -152,6 +152,15 @@ class TrelloMainDialog extends InterruptDialog {
             return await stepContext.endDialog();
         }
     }
+}
+
+/**
+ * Prints in chat the cards found in the http request.
+ * @param {*} stepContext - The context from previous interactions with the user.
+ * @param {string} responseAsJSON - The cards list as JSON.
+ */
+async function printCards(stepContext, responseAsJSON) {
+    console.log('**TRELLO MAIN DIALOG: printCards**\n');
 }
 
 /**

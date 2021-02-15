@@ -5,7 +5,7 @@ const https = require('https');
 // Setup trello keys
 const apiKey = process.env.TrelloAPIKey;
 const oAuthToken = process.env.TrelloOAuthToken;
-const token = process.env.StefanoTrelloToken;
+const token = process.env.StefanoTrelloToken; // ToDo: modify it with the user's token.
 
 if (!apiKey || !oAuthToken || !token) {
     throw new Error('Trello credentials are not set.');
@@ -42,6 +42,9 @@ function executeTrelloCall(url) {
     });
 }
 
+/**
+ * Returns all the user's board as a JSON.
+ */
 async function getAllMyBoards() {
     console.log('TRELLO ADAPTER - getAllBoards');
 
@@ -56,6 +59,9 @@ async function getAllMyBoards() {
     }
 }
 
+/**
+ * Returns all the user's card as a JSON.
+ */
 async function getAllMyCards() {
     return undefined;
 }
