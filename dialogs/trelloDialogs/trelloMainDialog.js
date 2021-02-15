@@ -66,7 +66,7 @@ class TrelloMainDialog extends InterruptDialog {
 
     /**
      * Implement the first trello main dialog message.
-     * @param {*} stepContext
+     * @param {*} stepContext - The context from previous interactions with the user.
      */
     async firstStep(stepContext) {
         console.log('**TRELLO MAIN DIALOG: firstStep**\n');
@@ -82,7 +82,7 @@ class TrelloMainDialog extends InterruptDialog {
 
     /**
      * Implement the dialog operations.
-     * @param {*} stepContext
+     * @param {*} stepContext - The context from previous interactions with the user.
      */
     async optionsStep(stepContext) {
         console.log('**TRELLO MAIN DIALOG: optionStep**\n');
@@ -108,6 +108,10 @@ class TrelloMainDialog extends InterruptDialog {
         return await stepContext.replaceDialog(this.id);
     }
 
+    /**
+     * Implements the interaction that asks to the user to continue or stop the conversation.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async waitStep(stepContext) {
         console.log('**TRELLO MAIN DIALOG: waitStep**\n');
 
@@ -118,6 +122,10 @@ class TrelloMainDialog extends InterruptDialog {
         });
     }
 
+    /**
+     * Implements the loop or quit of the dialog.
+     * @param {*} stepContext - The context from previous interactions with the user.
+     */
     async loopStep(stepContext) {
         console.log('**TRELLO MAIN DIALOG: loopStep**\n');
 
