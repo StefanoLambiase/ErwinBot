@@ -24,6 +24,7 @@ const PresentationMessage = require('../botResources/slack/PresentationMessage.j
 // Imports other dialogs
 const { TicketDialog, TICKET_DIALOG } = require('./ticketDialogs/ticketDialog');
 const { ShowTicketsDialog, SHOW_TICKETS_DIALOG } = require('./ticketDialogs/showTicketsDialog');
+const { TrelloMainDialog, TRELLO_MAIN_DIALOG } = require('./trelloDialogs/trelloMainDialog');
 
 const {
     SCRUM_DIALOG,
@@ -63,6 +64,7 @@ class MainDialog extends ComponentDialog {
         this.addDialog(new InfoDialog());
         this.addDialog(new TicketDialog(luisRecognizer, userState));
         this.addDialog(new ShowTicketsDialog(luisRecognizer));
+        this.addDialog(new TrelloMainDialog(luisRecognizer, userState));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
@@ -133,6 +135,8 @@ class MainDialog extends ComponentDialog {
             return await step.beginDialog(SCRUM_DIALOG);
         } else if (specifiedOption === 'info') {
             return await step.beginDialog(INFO_DIALOG);
+        } else if (specifiedOption === 'trello') {
+            return await step.beginDialog(TRELLO_MAIN_DIALOG);
         } else if (specifiedOption === 'show tickets' || LuisRecognizer.topIntent(luisResult) === 'show tickets') {
             return await step.beginDialog(SHOW_TICKETS_DIALOG);
         } else if (specifiedOption === 'open a ticket' || LuisRecognizer.topIntent(luisResult) === 'open a ticket') {
@@ -148,7 +152,7 @@ class MainDialog extends ComponentDialog {
 
     async waitStep(step) {
         return await step.prompt(CHOICE_PROMPT, {
-            prompt: 'Do you want to continue?',
+            prompt: 'Do you want to continue with Erwin Bot?',
             retryPrompt: 'Please select one of the following options',
             choices: ['yes', 'no']
         });
