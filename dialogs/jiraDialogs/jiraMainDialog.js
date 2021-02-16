@@ -21,7 +21,7 @@ var jira = new JiraClient({
     host: 'acupito.atlassian.net',
     basic_auth: {
         email: 'a.cupito@studenti.unisa.it',
-        api_token: '4dkiZytSAvkPJIfnGTTQBE8F'
+        api_token: process.env.JiraToken
     }
 });
 
