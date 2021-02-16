@@ -1,6 +1,5 @@
 // Import required types from libraries
 const {
-    ActivityTypes,
     MessageFactory,
     InputHints
 } = require('botbuilder');
@@ -102,6 +101,8 @@ class MainDialog extends ComponentDialog {
      * @param {*} step
      */
     async firstStep(step) {
+        console.log('**MAIN_DIALOG: firstStep**');
+
         if (!this.luisRecognizer.isConfigured) {
             const errorText = 'WARNING: There are problems in the Luis configuration';
             await step.context.sendActivity(errorText, null, InputHints.IgnoringInput);
@@ -127,16 +128,14 @@ class MainDialog extends ComponentDialog {
      * @param {*} step
      */
     async optionsStep(step) {
-        // Set the activity.
-        const reply = { type: ActivityTypes.Message };
+        console.log('**MAIN_DIALOG: optionsStep**');
 
         // Text from the previous step.
         const specifiedOption = (step.result).toLowerCase();
 
         // Luis result from LuisRecognizer.
         const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
-
-        console.log(LuisRecognizer.topIntent(luisResult));
+        console.log('LUIS INTENT: ' + LuisRecognizer.topIntent(luisResult));
 
         // Part to select the dialogs.
         if (specifiedOption === 'start daily scrum' || LuisRecognizer.topIntent(luisResult) === 'select_daily_scrum') {
@@ -153,14 +152,14 @@ class MainDialog extends ComponentDialog {
             return await step.beginDialog(TICKET_DIALOG);
         } else {
             // The user did not enter input that this bot was built to handle.
-            reply.text = 'Sorry! I can\'t recognize your command. Retry!';
-            await step.context.sendActivity(reply);
+            await step.context.sendActivity('Sorry! I can\'t recognize your command. Retry!');
+            return await step.replaceDialog(this.id);
         }
-
-        return await step.replaceDialog(this.id);
     }
 
     async waitStep(step) {
+        console.log('**MAIN_DIALOG: waitStep**');
+
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'Do you want to continue with Erwin Bot?',
             retryPrompt: 'Please select one of the following options',
@@ -169,12 +168,12 @@ class MainDialog extends ComponentDialog {
     }
 
     async loopStep(step) {
+        console.log('**MAIN_DIALOG: loopStep**');
+
         if (step.result.value === 'yes') {
             return await step.replaceDialog(this.id);
         } else {
-            await step.context.sendActivity(
-                'Bye Bye'
-            );
+            await step.context.sendActivity('Bye Bye');
             return await step.endDialog();
         }
     }
