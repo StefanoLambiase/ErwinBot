@@ -7,7 +7,7 @@ const {
 } = require('botbuilder-dialogs');
 
 /**
- * Implements the possibility to stop a ticket dialog exectuion to ask infos or cancel it.
+ * Implements the possibility to stop a dialog exectuion to ask infos or cancel it.
  */
 class InterruptDialog extends ComponentDialog {
     async onContinueDialog(innerDc) {
