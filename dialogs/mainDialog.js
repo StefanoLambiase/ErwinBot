@@ -138,14 +138,14 @@ class MainDialog extends ComponentDialog {
         console.log('LUIS INTENT: ' + LuisRecognizer.topIntent(luisResult));
 
         // Part to select the dialogs.
-        if (specifiedOption === 'start daily scrum' || LuisRecognizer.topIntent(luisResult) === 'select_daily_scrum') {
+        if (specifiedOption === 'jira') {
+            return await step.beginDialog(JIRA_MAIN_DIALOG);
+        } else if (specifiedOption === 'trello') {
+            return await step.beginDialog(TRELLO_MAIN_DIALOG);
+        } else if (specifiedOption === 'start daily scrum' || LuisRecognizer.topIntent(luisResult) === 'select_daily_scrum') {
             return await step.beginDialog(SCRUM_DIALOG);
         } else if (specifiedOption === 'info' || LuisRecognizer.topIntent(luisResult) === 'select_information') {
             return await step.beginDialog(INFO_DIALOG);
-        } else if (specifiedOption === 'trello') {
-            return await step.beginDialog(TRELLO_MAIN_DIALOG);
-        } else if (specifiedOption === 'jira') {
-            return await step.beginDialog(JIRA_MAIN_DIALOG);
         } else if (specifiedOption === 'show tickets' || LuisRecognizer.topIntent(luisResult) === 'show_tickets') {
             return await step.beginDialog(SHOW_TICKETS_DIALOG);
         } else if (specifiedOption === 'open a ticket' || LuisRecognizer.topIntent(luisResult) === 'open_a_ticket') {
