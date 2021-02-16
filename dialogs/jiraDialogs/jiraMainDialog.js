@@ -3,7 +3,7 @@ const { ActivityTypes, CardFactory } = require('botbuilder');
 
 // Import for Adaptive Card templating.
 const ACData = require('adaptivecards-templating');
-const boardCard = require('../../botResources/adaptiveCardStructures/trelloCards/boardCard.json');
+const jiraCard = require('../../botResources/adaptiveCardStructures/jiraCards/jiraCard.json');
 
 const {
     TextPrompt,
@@ -66,6 +66,11 @@ class JiraMainDialog extends InterruptDialog {
         const jiraIssue = await jira.issue.getIssue({ issueKey: 'ER-1' });
 
         console.log(jiraIssue);
+        console.log(jiraIssue.key);
+        console.log(jiraIssue.fields.project.name);
+        console.log(jiraIssue.fields.summary);
+        console.log(jiraIssue.fields.description);
+        console.log(jiraIssue.fields.priority.name);
 
         if (step.context.activity.channelId === 'slack') {
             await step.context.sendActivity(
@@ -75,44 +80,47 @@ class JiraMainDialog extends InterruptDialog {
                         attachments: [
                             {
                                 title: 'Board Name',
-                                text: jiraIssue.project.name
+                                text: jiraIssue.fields.project.name
                             },
                             {
                                 title: 'Issue Name',
-                                text: jiraIssue.summary
+                                text: jiraIssue.fields.summary
                             },
                             {
                                 title: 'Description',
-                                text: jiraIssue.description
+                                text: jiraIssue.fields.description
                             },
                             {
                                 title: 'Issue Priority',
-                                text: jiraIssue.priority.name
+                                text: jiraIssue.fields.priority.name
                             }
                         ]
                     }
                 }
             );
         } else {
-            /* await jiraIssue.forEach(async (item, index) => {
-                // Create a Template instance from the template payload
-                const template = new ACData.Template(boardCard);
+            // Create a Template instance from the template payload
+            const template = new ACData.Template(jiraCard);
 
-                const card = await template.expand({
-                    $root: {
-                        index: item.key + 1,
-                        name: item.project.name,
-                        url: item.summary,
-                        desc: item.description
-                    }
-                });
+            const card = await template.expand({
+                $root: {
+                    issue: jiraIssue.key,
+                    project: jiraIssue.fields.project.name,
+                    name: jiraIssue.fields.summary,
+                    desc: jiraIssue.fields.description,
+                    priority: jiraIssue.fields.priority.name
+                }
+            });
 
-                // Send the card.
-                const cardMessage = { type: ActivityTypes.Message };
-                cardMessage.attachments = [CardFactory.adaptiveCard(card)];
-                await step.context.sendActivity(cardMessage);
-            }); */
+            // Send the card.
+            const cardMessage = { type: ActivityTypes.Message };
+            cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+            await step.context.sendActivity(cardMessage);
         }
+
+        return await step.context.sendActivities([
+            { type: 'message', text: 'Job done, bye bye!' }
+        ]);
     }
 }
 module.exports.JiraMainDialog = JiraMainDialog;
