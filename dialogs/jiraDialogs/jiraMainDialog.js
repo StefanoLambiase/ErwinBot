@@ -68,33 +68,31 @@ class JiraMainDialog extends InterruptDialog {
         console.log(jiraIssue);
 
         if (step.context.activity.channelId === 'slack') {
-            await jiraIssue.forEach(async (item, index) => {
-                await step.context.sendActivity(
-                    {
-                        channelData: {
-                            text: 'Issue Key ' + item.key,
-                            attachments: [
-                                {
-                                    title: 'Board Name',
-                                    text: item.project.name
-                                },
-                                {
-                                    title: 'Issue Name',
-                                    text: item.summary
-                                },
-                                {
-                                    title: 'Description',
-                                    text: item.description
-                                },
-                                {
-                                    title: 'Issue Priority',
-                                    text: item.priority.name
-                                }
-                            ]
-                        }
+            await step.context.sendActivity(
+                {
+                    channelData: {
+                        text: 'Issue Key ' + jiraIssue.key,
+                        attachments: [
+                            {
+                                title: 'Board Name',
+                                text: jiraIssue.project.name
+                            },
+                            {
+                                title: 'Issue Name',
+                                text: jiraIssue.summary
+                            },
+                            {
+                                title: 'Description',
+                                text: jiraIssue.description
+                            },
+                            {
+                                title: 'Issue Priority',
+                                text: jiraIssue.priority.name
+                            }
+                        ]
                     }
-                );
-            });
+                }
+            );
         } else {
             /* await jiraIssue.forEach(async (item, index) => {
                 // Create a Template instance from the template payload
