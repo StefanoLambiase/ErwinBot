@@ -41,7 +41,6 @@ class JiraMainDialog extends InterruptDialog {
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-            this.retrieveIssueStep.bind(this),
             this.firstStep.bind(this),
             this.selectedOptionStep(this)
         ]));
