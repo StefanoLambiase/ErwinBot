@@ -83,10 +83,10 @@ class JiraMainDialog extends InterruptDialog {
         // const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
 
         // Part to select the dialogs.
-        if (specifiedOption === 'create a card') {
+        if (specifiedOption === 'create issue') {
             await step.context.sendActivity('Sorry! This feature is in development!');
-        } else if (specifiedOption === 'projects') {
-            await retrieveIssue();
+        } else if (specifiedOption === 'get my projects') {
+            await retrieveIssue(step);
         } else {
             // The user did not enter input that this bot was built to handle.
             await step.context.sendActivity('Sorry! I can\'t recognize your command. Retry!');
@@ -98,9 +98,9 @@ class JiraMainDialog extends InterruptDialog {
 
 async function retrieveIssue(step) {
     const jiraIssue = await jira.issue.getIssue({ issueKey: 'ER-1' });
-
+    const myBoards = await jira.board.getAllBoards();
     console.log(jiraIssue);
-
+    console.log(myBoards);
     if (step.context.activity.channelId === 'slack') {
         await step.context.sendActivity(
             {
