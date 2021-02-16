@@ -1,3 +1,10 @@
+// Import required types from libraries
+const { ActivityTypes, CardFactory } = require('botbuilder');
+
+// Import for Adaptive Card templating.
+const ACData = require('adaptivecards-templating');
+const boardCard = require('../../botResources/adaptiveCardStructures/trelloCards/boardCard.json');
+
 const {
     TextPrompt,
     ChoicePrompt,
@@ -60,11 +67,55 @@ class JiraMainDialog extends InterruptDialog {
 
         console.log(jiraIssue);
 
-        return await step.context.sendActivity(
-            jiraIssue
-        );
+        if (step.context.activity.channelId === 'slack') {
+            await jiraIssue.forEach(async (item, index) => {
+                await step.context.sendActivity(
+                    {
+                        channelData: {
+                            text: 'Issue Key ' + item.key,
+                            attachments: [
+                                {
+                                    title: 'Board Name',
+                                    text: item.project.name
+                                },
+                                {
+                                    title: 'Issue Name',
+                                    text: item.summary
+                                },
+                                {
+                                    title: 'Description',
+                                    text: item.description
+                                },
+                                {
+                                    title: 'Issue Priority',
+                                    text: item.priority.name
+                                }
+                            ]
+                        }
+                    }
+                );
+            });
+        } else {
+            /* await jiraIssue.forEach(async (item, index) => {
+                // Create a Template instance from the template payload
+                const template = new ACData.Template(boardCard);
+
+                const card = await template.expand({
+                    $root: {
+                        index: item.key + 1,
+                        name: item.project.name,
+                        url: item.summary,
+                        desc: item.description
+                    }
+                });
+
+                // Send the card.
+                const cardMessage = { type: ActivityTypes.Message };
+                cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+                await step.context.sendActivity(cardMessage);
+            }); */
+        }
     }
 }
-
 module.exports.JiraMainDialog = JiraMainDialog;
 module.exports.JIRA_MAIN_DIALOG = JIRA_MAIN_DIALOG;
