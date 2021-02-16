@@ -81,7 +81,7 @@ class TrelloMainDialog extends InterruptDialog {
         return await stepContext.prompt(CHOICE_PROMPT, {
             prompt: 'What do you want to do?',
             retryPrompt: 'Please choose an option from the list.',
-            choices: ['Get my boards']
+            choices: ['Get my boards', 'Create a card']
         });
     }
 
@@ -99,13 +99,8 @@ class TrelloMainDialog extends InterruptDialog {
         const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context);
 
         // Part to select the dialogs.
-        if (specifiedOption === 'get my cards') {
-            const responseAsJSON = await trelloAdapter.getAllCardsInBoard();
-            if (responseAsJSON !== undefined) {
-                await printCards(stepContext, responseAsJSON);
-            } else {
-                await stepContext.context.sendActivity('Sorry! There are problems with Trello! Retry later.');
-            }
+        if (specifiedOption === 'create a card') {
+            await stepContext.context.sendActivity('Sorry! This feature is in development!');
         } else if (specifiedOption === 'get my boards') {
             const responseAsJSON = await trelloAdapter.getAllMyBoards();
             if (responseAsJSON !== undefined) {
@@ -152,15 +147,6 @@ class TrelloMainDialog extends InterruptDialog {
             return await stepContext.endDialog();
         }
     }
-}
-
-/**
- * Prints in chat the cards found in the http request.
- * @param {*} stepContext - The context from previous interactions with the user.
- * @param {string} responseAsJSON - The cards list as JSON.
- */
-async function printCards(stepContext, responseAsJSON) {
-    console.log('**TRELLO MAIN DIALOG: printCards**\n');
 }
 
 /**

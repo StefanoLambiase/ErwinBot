@@ -23,6 +23,43 @@ class ErwinRecognizer {
     async executeLuisQuery(context) {
         return await this.recognizer.recognize(context);
     }
+
+    // #######################################################################
+    // ###################### CreateTrelloCard entities ######################
+    // #######################################################################
+
+    getTrelloCardName(result) {
+        let trelloCardName;
+        if (result.entities.$instance.TrelloCardName) {
+            trelloCardName = result.entities.$instance.TrelloCardName[0].text;
+        }
+
+        return trelloCardName;
+    }
+
+    getTrelloCardDescription(result) {
+        let trelloCardDescription;
+        if (result.entities.$instance.trelloCardDescription) {
+            trelloCardDescription = result.entities.$instance.trelloCardDescription[0].text;
+        }
+
+        return trelloCardDescription;
+    }
+
+    getTrelloCardDeadline(result) {
+        let trelloCardDeadline;
+        if (result.entities.$instance.trelloCardDeadline) {
+            trelloCardDeadline = result.entities.$instance.trelloCardDeadline[0].text;
+        }
+
+        if (trelloCardDeadline) return undefined;
+
+        const timex = trelloCardDeadline[0].timex;
+        if (!timex || !timex[0]) return undefined;
+
+        const datetime = timex[0].split('T')[0];
+        return datetime;
+    }
 }
 
 module.exports.ErwinRecognizer = ErwinRecognizer;
