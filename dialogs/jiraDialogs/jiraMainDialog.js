@@ -41,7 +41,9 @@ class JiraMainDialog extends InterruptDialog {
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-            this.retrieveIssueStep.bind(this)
+            this.retrieveIssueStep.bind(this),
+            this.firstStep.bind(this),
+            this.selectedOptionStep(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -62,66 +64,94 @@ class JiraMainDialog extends InterruptDialog {
         }
     }
 
-    async retrieveIssueStep(step) {
-        const jiraIssue = await jira.issue.getIssue({ issueKey: 'ER-1' });
+    // Initial step, uselful to select the options
+    async firstStep(step) {
+        await step.context.sendActivity('I, the Bot-mander, can interact with your Jira projects');
+        // Prompt the user for a choice.
+        return await step.prompt(CHOICE_PROMPT, {
+            prompt: 'What do you want to do?',
+            retryPrompt: 'Please choose an option from the list.',
+            choices: ['Get my projects']
+        });
+    }
 
-        console.log(jiraIssue);
-        console.log(jiraIssue.key);
-        console.log(jiraIssue.fields.project.name);
-        console.log(jiraIssue.fields.summary);
-        console.log(jiraIssue.fields.description);
-        console.log(jiraIssue.fields.priority.name);
+    // Define the logic to handle the possible options
+    async selectedOptionStep(step) {
+        // Text from the previous step.
+        const specifiedOption = (step.result.value).toLowerCase();
 
-        if (step.context.activity.channelId === 'slack') {
-            await step.context.sendActivity(
-                {
-                    channelData: {
-                        text: 'Issue Key ' + jiraIssue.key,
-                        attachments: [
-                            {
-                                title: 'Board Name',
-                                text: jiraIssue.fields.project.name
-                            },
-                            {
-                                title: 'Issue Name',
-                                text: jiraIssue.fields.summary
-                            },
-                            {
-                                title: 'Description',
-                                text: jiraIssue.fields.description
-                            },
-                            {
-                                title: 'Issue Priority',
-                                text: jiraIssue.fields.priority.name
-                            }
-                        ]
-                    }
-                }
-            );
+        // Luis result from LuisRecognizer.
+        // const luisResult = await this.luisRecognizer.executeLuisQuery(step.context);
+
+        // Part to select the dialogs.
+        if (specifiedOption === 'create a card') {
+            await step.context.sendActivity('Sorry! This feature is in development!');
+        } else if (specifiedOption === 'projects') {
+            await retrieveIssue();
         } else {
-            // Create a Template instance from the template payload
-            const template = new ACData.Template(jiraCard);
-
-            const card = await template.expand({
-                $root: {
-                    issue: jiraIssue.key,
-                    project: jiraIssue.fields.project.name,
-                    name: jiraIssue.fields.summary,
-                    desc: jiraIssue.fields.description,
-                    priority: jiraIssue.fields.priority.name
-                }
-            });
-
-            // Send the card.
-            const cardMessage = { type: ActivityTypes.Message };
-            cardMessage.attachments = [CardFactory.adaptiveCard(card)];
-            await step.context.sendActivity(cardMessage);
+            // The user did not enter input that this bot was built to handle.
+            await step.context.sendActivity('Sorry! I can\'t recognize your command. Retry!');
         }
 
-        return await step.context.sendActivities([
-            { type: 'message', text: 'Job done, bye bye!' }
-        ]);
+        return await step.next();
     }
 }
+
+async function retrieveIssue(step) {
+    const jiraIssue = await jira.issue.getIssue({ issueKey: 'ER-1' });
+
+    console.log(jiraIssue);
+
+    if (step.context.activity.channelId === 'slack') {
+        await step.context.sendActivity(
+            {
+                channelData: {
+                    text: 'Issue Key ' + jiraIssue.key,
+                    attachments: [
+                        {
+                            title: 'Board Name',
+                            text: jiraIssue.fields.project.name
+                        },
+                        {
+                            title: 'Issue Name',
+                            text: jiraIssue.fields.summary
+                        },
+                        {
+                            title: 'Description',
+                            text: jiraIssue.fields.description
+                        },
+                        {
+                            title: 'Issue Priority',
+                            text: jiraIssue.fields.priority.name
+                        }
+                    ]
+                }
+            }
+        );
+    } else {
+        // Create a Template instance from the template payload
+        const template = new ACData.Template(jiraCard);
+
+        const card = await template.expand({
+            $root: {
+                issue: jiraIssue.key,
+                project: jiraIssue.fields.project.name,
+                name: jiraIssue.fields.summary,
+                desc: jiraIssue.fields.description,
+                priority: jiraIssue.fields.priority.name
+            }
+        });
+
+        // Send the card.
+        const cardMessage = { type: ActivityTypes.Message };
+        cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+        await step.context.sendActivity(cardMessage);
+    }
+
+    return await step.context.sendActivities([
+        { type: 'message', text: 'Job done, bye bye!' }
+    ]);
+}
+
 module.exports.JiraMainDialog = JiraMainDialog;
 module.exports.JIRA_MAIN_DIALOG = JIRA_MAIN_DIALOG;
