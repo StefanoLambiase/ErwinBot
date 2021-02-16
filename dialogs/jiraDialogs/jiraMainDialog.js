@@ -42,7 +42,7 @@ class JiraMainDialog extends InterruptDialog {
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
-            this.selectedOptionStep(this)
+            this.selectedOptionStep.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -70,7 +70,7 @@ class JiraMainDialog extends InterruptDialog {
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'What do you want to do?',
             retryPrompt: 'Please choose an option from the list.',
-            choices: ['Get my projects']
+            choices: ['Get my projects', 'Create Issue']
         });
     }
 
