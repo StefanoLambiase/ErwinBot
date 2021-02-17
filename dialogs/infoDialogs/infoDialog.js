@@ -1,3 +1,4 @@
+const { ActivityHandler, CardFactory } = require('botbuilder');
 
 const {
     TextPrompt,
@@ -9,6 +10,8 @@ const {
 
 // Imports for Slack
 const InfoOptions = require('../../botResources/slack/InfoOptions.json');
+
+const infoCard = require('../../botResources/adaptiveCardStructures/infoCards/infoCard.json');
 
 // Dialogs names
 const INFO_DIALOG = 'INFO_DIALOG';
@@ -44,9 +47,11 @@ class InfoDialog extends ComponentDialog {
     }
 
     async optionStep(step) {
-        return await step.context.sendActivities([
-            { channelData: InfoOptions }
-        ]);
+        if (step.context.activity.channelId === 'slack') {
+            return await step.context.sendActivity({ channelData: InfoOptions });
+        } else {
+            return await step.context.sendActivity({ attachments: [CardFactory.adaptiveCard(infoCard)] });
+        }
     }
 }
 

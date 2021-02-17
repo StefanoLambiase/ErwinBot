@@ -1,7 +1,10 @@
 // Import required types from libraries
 const {
     MessageFactory,
-    InputHints
+    CardFactory,
+    InputHints,
+    ActionTypes,
+    ActivityTypes
 } = require('botbuilder');
 
 const {
@@ -113,6 +116,28 @@ class MainDialog extends ComponentDialog {
             await step.context.sendActivity({
                 channelData: PresentationMessage
             });
+        } else {
+            // Lists the card buttons.
+            const buttons = [
+                { type: ActionTypes.ImBack, title: '1. Open a ticket', value: 'open a ticket' },
+                { type: ActionTypes.ImBack, title: '2. Show tickets', value: 'show tickets' },
+                { type: ActionTypes.ImBack, title: '3. Jira', value: 'jira' },
+                { type: ActionTypes.ImBack, title: '4. Trello', value: 'trello' },
+                { type: ActionTypes.ImBack, title: '5. Bot info', value: 'info' }
+            ];
+
+            // Creates the card to send.
+            const card = CardFactory.heroCard(
+                '**Erwin Bot**',
+                CardFactory.images(['https://raw.githubusercontent.com/StefanoLambiase/ErwinBot/develop/botResources/images/erwinImage.png?token=AJWVTDJ7UPZLZWQ7LTTK7J3AGAKE2']),
+                buttons,
+                { text: 'by Andrea Cupito & Stefano Lambiase' }
+            );
+
+            // Sends the card.
+            const reply = { type: ActivityTypes.Message };
+            reply.attachments = [card];
+            await step.context.sendActivity(reply);
         }
 
         const messageText = step.options.restartMsg ? step.options.restartMsg : 'Write something to start or press one of the above buttons';
