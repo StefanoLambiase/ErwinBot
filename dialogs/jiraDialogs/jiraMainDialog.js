@@ -145,7 +145,8 @@ async function retrieveIssue(step, selectedIssueKey) {
                     attachments: [
                         {
                             title: 'Board Name',
-                            text: jiraIssue.fields.project.name
+                            text: jiraIssue.fields.project.name,
+                            color: '#3AA3E3'
                         },
                         {
                             title: 'Issue Name',
