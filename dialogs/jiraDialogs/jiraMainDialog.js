@@ -42,7 +42,8 @@ class JiraMainDialog extends InterruptDialog {
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.firstStep.bind(this),
-            this.selectedOptionStep.bind(this)
+            this.selectedOptionStep.bind(this),
+            this.issueDetails.bind(this)
         ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -70,7 +71,7 @@ class JiraMainDialog extends InterruptDialog {
         return await step.prompt(CHOICE_PROMPT, {
             prompt: 'What do you want to do?',
             retryPrompt: 'Please choose an option from the list.',
-            choices: ['Get my projects', 'Create Issue']
+            choices: ['Get Issues', 'Create Issue']
         });
     }
 
@@ -85,8 +86,19 @@ class JiraMainDialog extends InterruptDialog {
         // Part to select the dialogs.
         if (specifiedOption === 'create issue') {
             await step.context.sendActivity('Sorry! This feature is in development!');
-        } else if (specifiedOption === 'get my projects') {
-            await retrieveIssue(step);
+        } else if (specifiedOption === 'get issues') {
+            const allIssues = await retrieveBoard();
+            const issuesKey = [];
+
+            allIssues.issues.forEach(async item => {
+                issuesKey.push(item.key);
+            });
+
+            return await step.prompt(CHOICE_PROMPT, {
+                prompt: 'Which issue you want to see in details?',
+                retryPrompt: 'Please choose an option from the list.',
+                choices: issuesKey
+            });
         } else {
             // The user did not enter input that this bot was built to handle.
             await step.context.sendActivity('Sorry! I can\'t recognize your command. Retry!');
@@ -94,13 +106,37 @@ class JiraMainDialog extends InterruptDialog {
 
         return await step.next();
     }
+
+    async issueDetails(step) {
+        if (step.result != null) {
+            const selectedIssueKey = step.result.value;
+            console.log(selectedIssueKey);
+            await retrieveIssue(step, selectedIssueKey);
+
+            return step.context.sendActivity('My job here is done, bye bye!');
+        } else {
+            return await step.next();
+        }
+    }
 }
 
-async function retrieveIssue(step) {
-    const jiraIssue = await jira.issue.getIssue({ issueKey: 'ER-1' });
+// --------------------------------------- JIRA FUNCTIONS ------------------------------------------------
+
+async function retrieveBoard() {
     const myBoards = await jira.board.getAllBoards();
+
+    // Get the project id to retrieve all issues
+    const boardId = myBoards.values[0].id;
+    const issueBoard = await jira.board.getIssuesForBoard({ boardId: boardId });
+
+    return issueBoard;
+}
+
+async function retrieveIssue(step, selectedIssueKey) {
+    const jiraIssue = await jira.issue.getIssue({ issueKey: selectedIssueKey });
+
     console.log(jiraIssue);
-    console.log(myBoards);
+
     if (step.context.activity.channelId === 'slack') {
         await step.context.sendActivity(
             {
@@ -122,11 +158,19 @@ async function retrieveIssue(step) {
                         {
                             title: 'Issue Priority',
                             text: jiraIssue.fields.priority.name
+                        },
+                        {
+                            title: 'Assignee',
+                            text: jiraIssue.fields.assignee.displayName
                         }
                     ]
                 }
             }
         );
+
+        await new Promise(resolve => setTimeout(() => resolve(
+            console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+        ), 2000));
     } else {
         // Create a Template instance from the template payload
         const template = new ACData.Template(jiraCard);
@@ -137,7 +181,8 @@ async function retrieveIssue(step) {
                 project: jiraIssue.fields.project.name,
                 name: jiraIssue.fields.summary,
                 desc: jiraIssue.fields.description,
-                priority: jiraIssue.fields.priority.name
+                priority: jiraIssue.fields.priority.name,
+                assignee: jiraIssue.fields.assignee.displayName
             }
         });
 
@@ -147,9 +192,9 @@ async function retrieveIssue(step) {
         await step.context.sendActivity(cardMessage);
     }
 
-    return await step.context.sendActivities([
-        { type: 'message', text: 'Job done, bye bye!' }
-    ]);
+    await new Promise(resolve => setTimeout(() => resolve(
+        console.log('Wait 4 seconds after boards print.')
+    ), 2000));
 }
 
 module.exports.JiraMainDialog = JiraMainDialog;

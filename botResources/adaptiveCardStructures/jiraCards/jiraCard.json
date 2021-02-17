@@ -118,6 +118,34 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Assignee",
+                            "weight": "bolder",
+                            "wrap": true
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${assignee}",
+                            "wrap": true
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
