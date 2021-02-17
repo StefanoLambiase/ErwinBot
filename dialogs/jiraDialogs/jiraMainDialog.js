@@ -150,19 +150,23 @@ async function retrieveIssue(step, selectedIssueKey) {
                         },
                         {
                             title: 'Issue Name',
-                            text: jiraIssue.fields.summary
+                            text: jiraIssue.fields.summary,
+                            color: '#3AA3E3'
                         },
                         {
                             title: 'Description',
-                            text: jiraIssue.fields.description
+                            text: jiraIssue.fields.description,
+                            color: '#3AA3E3'
                         },
                         {
                             title: 'Issue Priority',
-                            text: jiraIssue.fields.priority.name
+                            text: jiraIssue.fields.priority.name,
+                            color: '#3AA3E3'
                         },
                         {
                             title: 'Assignee',
-                            text: jiraIssue.fields.assignee.displayName
+                            text: jiraIssue.fields.assignee.displayName,
+                            color: '#3AA3E3'
                         }
                     ]
                 }
