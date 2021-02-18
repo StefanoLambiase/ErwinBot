@@ -3,9 +3,15 @@
     "body": [
         {
             "type": "TextBlock",
-            "size": "Medium",
+            "size": "large",
             "weight": "Bolder",
             "text": "**Erwin Bot Infos**"
+        },
+        {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "**Authors**",
+            "spacing": "Medium"
         },
         {
             "type": "ColumnSet",
@@ -35,7 +41,7 @@
                                         {
                                             "type": "TextBlock",
                                             "weight": "Bolder",
-                                            "text": "Stefano Lambiase",
+                                            "text": "[Stefano Lambiase](https://github.com/StefanoLambiase)",
                                             "wrap": true
                                         }
                                     ],
@@ -76,7 +82,7 @@
                                         {
                                             "type": "TextBlock",
                                             "weight": "Bolder",
-                                            "text": "Andrea Cupito",
+                                            "text": "[Andrea Cupito](https://github.com/ACupito)",
                                             "wrap": true
                                         }
                                     ],
@@ -98,7 +104,8 @@
             "text": "**GitHub repository**",
             "wrap": true,
             "fontType": "Default",
-            "weight": "Bolder"
+            "weight": "Bolder",
+            "spacing": "Medium"
         },
         {
             "type": "TextBlock",
@@ -110,7 +117,8 @@
             "text": "**Contact us on Linkedin**",
             "wrap": true,
             "fontType": "Default",
-            "weight": "Bolder"
+            "weight": "Bolder",
+            "spacing": "Medium"
         },
         {
             "type": "TextBlock",
