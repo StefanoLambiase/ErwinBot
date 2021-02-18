@@ -156,80 +156,8 @@ class TicketDialog extends InterruptDialog {
                 { type: 'message', text: 'These are the informations that I have found! 😀' }
             ]);
 
-            // Send the informations as adaptive cards using a forEach loop.
-            if (stepContext.context.activity.channelId === 'slack') {
-                // Creates a Color array.
-                let colorIndex = 0;
-                const color = ['Blue', 'Green', 'Red', 'Orange', 'Violet', 'Indigo', 'Yellow'];
-                await responseAsJSON.webPages.value.forEach(async (item, index) => {
-                    await stepContext.context.sendActivity(
-                        {
-                            channelData: {
-                                attachments: [
-                                    {
-                                        title: 'Site name',
-                                        text: item.name,
-                                        color: color[colorIndex]
-                                    },
-                                    {
-                                        color: color[colorIndex],
-                                        fields: [
-                                            {
-                                                title: 'Date last crawled',
-                                                value: moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a'),
-                                                short: true
-                                            },
-                                            {
-                                                title: 'Site language',
-                                                value: item.language,
-                                                short: true
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        title: 'Link to the site',
-                                        text: item.url,
-                                        color: color[colorIndex]
-                                    },
-                                    {
-                                        title: 'Site snippet',
-                                        text: item.snippet,
-                                        color: color[colorIndex]
-                                    }
-                                ]
-                            }
-                        }
-                    );
-
-                    // Increments color index.
-                    colorIndex = ((colorIndex + 1) === color.length) ? 0 : (colorIndex + 1);
-
-                    await new Promise(resolve => setTimeout(() => resolve(
-                        console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-                    ), 2000));
-                });
-            } else {
-                await responseAsJSON.webPages.value.forEach(async (item, index) => {
-                    // Create a Template instance from the template payload
-                    const template = new ACData.Template(searchResultTicketCard);
-
-                    const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
-
-                    const card = await template.expand({
-                        $root: {
-                            title: item.name,
-                            lastCrawled: date.toString(),
-                            language: item.language,
-                            linkToTheSite: item.url,
-                            snippet: item.snippet
-                        }
-                    });
-
-                    const cardMessage = { type: ActivityTypes.Message };
-                    cardMessage.attachments = [CardFactory.adaptiveCard(card)];
-                    await stepContext.context.sendActivity(cardMessage);
-                });
-            }
+            // Prints the bing search results.
+            await printBingSearchResult(stepContext, responseAsJSON);
         }
 
         // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
@@ -437,6 +365,99 @@ class TicketDialog extends InterruptDialog {
             { type: 'message', text: 'Your interaction for the ticket **ends** here!' }
         ]);
         return await stepContext.endDialog();
+    }
+}
+
+/**
+ * Prints in chat the Bing search results as full fidelity (on Slack) or adaptive cards.
+ * @param {*} stepContext - The context from previous interactions with the user.
+ * @param {string} responseAsJSON - The bing search result as JSON string.
+ */
+async function printBingSearchResult(stepContext, responseAsJSON) {
+    // Send the informations as slack full fidelity or adaptive cards using a forEach loop.
+    if (stepContext.context.activity.channelId === 'slack') {
+        // Creates a Color array.
+        let colorIndex = 0;
+        const color = [
+            '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
+            '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+            '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
+            '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+            '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
+            '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+            '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
+            '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+            '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
+            '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'
+        ];
+        await responseAsJSON.webPages.value.forEach(async (item, index) => {
+            await stepContext.context.sendActivity(
+                {
+                    channelData: {
+                        attachments: [
+                            {
+                                title: 'Site name',
+                                text: item.name,
+                                color: color[colorIndex]
+                            },
+                            {
+                                color: color[colorIndex],
+                                fields: [
+                                    {
+                                        title: 'Date last crawled',
+                                        value: moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a'),
+                                        short: true
+                                    },
+                                    {
+                                        title: 'Site language',
+                                        value: item.language,
+                                        short: true
+                                    }
+                                ]
+                            },
+                            {
+                                title: 'Link to the site',
+                                text: item.url,
+                                color: color[colorIndex]
+                            },
+                            {
+                                title: 'Site snippet',
+                                text: item.snippet,
+                                color: color[colorIndex]
+                            }
+                        ]
+                    }
+                }
+            );
+
+            // Increments color index.
+            colorIndex = ((colorIndex + 1) === color.length) ? 0 : (colorIndex + 1);
+
+            await new Promise(resolve => setTimeout(() => resolve(
+                console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+            ), 2000));
+        });
+    } else {
+        await responseAsJSON.webPages.value.forEach(async (item, index) => {
+            // Create a Template instance from the template payload
+            const template = new ACData.Template(searchResultTicketCard);
+
+            const date = moment(item.dateLastCrawled).format('MMMM Do YYYY, h:mm:ss a');
+
+            const card = await template.expand({
+                $root: {
+                    title: item.name,
+                    lastCrawled: date.toString(),
+                    language: item.language,
+                    linkToTheSite: item.url,
+                    snippet: item.snippet
+                }
+            });
+
+            const cardMessage = { type: ActivityTypes.Message };
+            cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+            await stepContext.context.sendActivity(cardMessage);
+        });
     }
 }
 
