@@ -113,14 +113,14 @@ class ShowTicketsDialog extends InterruptDialog {
             } else {
                 await stepContext.context.sendActivity('These are the tickets that I have found.');
 
-                await tickets.forEach(async (item, index) => {
+                for (const [index, item] of tickets.entries()) {
                     // Create a Template instance from the template payload
                     const template = new ACData.Template(ticketCard);
 
                     let solutionsString = '';
-                    await item.problemPossibilities.forEach((item2, index2) => {
+                    for (const [index2, item2] of item.problemPossibilities.entries()) {
                         solutionsString = solutionsString + index2 + '. ' + item2 + '\n';
-                    });
+                    }
 
                     const card = await template.expand({
                         $root: {
@@ -142,9 +142,9 @@ class ShowTicketsDialog extends InterruptDialog {
                     if (stepContext.context.activity.channelId === 'slack') {
                         await new Promise(resolve => setTimeout(() => resolve(
                             console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-                        ), 2000));
+                        ), 1000));
                     }
-                });
+                }
 
                 // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
                 if (stepContext.context.activity.channelId === 'slack') {
@@ -158,6 +158,7 @@ class ShowTicketsDialog extends InterruptDialog {
                 { type: 'message', text: 'Perfect, my job here is done! 😎' },
                 { type: 'message', text: 'Your interaction for the ticket **ends** here!' }
             ]);
+
             return await stepContext.endDialog();
         } else {
             await stepContext.context.sendActivity('The email inserted doesn\'t match the email format. Please retry.');

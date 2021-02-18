@@ -18,7 +18,7 @@ const {
 } = require('botbuilder-ai');
 
 // Import utils.
-const trelloAdapter = require('./ticketUtils/trelloAdapter');
+const trelloAdapter = require('./trelloUtils/trelloAdapter');
 const moment = require('moment');
 
 // Import dialogs
@@ -29,6 +29,20 @@ const TRELLO_MAIN_DIALOG = 'TRELLO_MAIN_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
+
+// Global color array.
+const color = [
+    '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
+    '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+    '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
+    '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+    '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
+    '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+    '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
+    '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+    '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
+    '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'
+];
 
 /**
  * Implements the first interaction for the trello integration.
@@ -158,11 +172,15 @@ async function printBoards(stepContext, responseAsJSON) {
     console.log('**TRELLO MAIN DIALOG: printBoards**\n');
 
     if (stepContext.context.activity.channelId === 'slack') {
-        await responseAsJSON.forEach(async (item, index) => {
+        // Creates a Color index for colors array.
+        let colorIndex = 0;
+
+        for (const [index, item] of responseAsJSON.entries()) {
             await stepContext.context.sendActivity(
                 {
                     channelData: {
                         text: 'Card number ' + index,
+                        color: color[colorIndex],
                         attachments: [
                             {
                                 title: 'Board Name',
@@ -185,12 +203,15 @@ async function printBoards(stepContext, responseAsJSON) {
                 }
             );
 
+            // Increments color index.
+            colorIndex = ((colorIndex + 1) === color.length) ? 0 : (colorIndex + 1);
+
             await new Promise(resolve => setTimeout(() => resolve(
                 console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-            ), 2000));
-        });
+            ), 1000));
+        }
     } else {
-        await responseAsJSON.forEach(async (item, index) => {
+        for (const [index, item] of responseAsJSON.entries()) {
             // Create a Template instance from the template payload
             const template = new ACData.Template(boardCard);
 
@@ -210,12 +231,12 @@ async function printBoards(stepContext, responseAsJSON) {
             const cardMessage = { type: ActivityTypes.Message };
             cardMessage.attachments = [CardFactory.adaptiveCard(card)];
             await stepContext.context.sendActivity(cardMessage);
-        });
+        }
     }
 
     await new Promise(resolve => setTimeout(() => resolve(
         console.log('Wait 4 seconds after boards print.')
-    ), 2000));
+    ), 1000));
 }
 
 module.exports.TrelloMainDialog = TrelloMainDialog;

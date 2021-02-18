@@ -36,6 +36,20 @@ const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
 
+// Global color array.
+const color = [
+    '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
+    '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+    '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
+    '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+    '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
+    '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+    '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
+    '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+    '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
+    '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'
+];
+
 /**
  * Implements the functionality used to open a problem ticket.
  * The philosophy used for this interaction has been ispired by a Dale Carnagie book.
@@ -268,43 +282,10 @@ class TicketDialog extends InterruptDialog {
 
         // Starts to send the messages to the user.
         await stepContext.context.sendActivity('We are at the final step.');
-        // Check if the channel used by the user is Slack or not.
-        if (stepContext.context.activity.channelId === 'slack') {
-            await stepContext.context.sendActivity(
-                {
-                    channelData: {
-                        text: 'Problem Informations',
-                        attachments: [
-                            {
-                                title: 'Problem definition',
-                                text: ticket.problemDefinition
-                            },
-                            {
-                                title: 'Problem cause',
-                                text: ticket.problemCause
-                            },
-                            {
-                                title: 'Problem Solutions',
-                                text: ticket.getPossibilitiesAsString()
-                            },
-                            {
-                                title: 'Favourite solution',
-                                text: ticket.problemSolution
-                            }
-                        ]
-                    }
-                }
-            );
-        } else {
-            await stepContext.context.sendActivities([
-                // Send ticket informations as messages.
-                { type: 'message', text: 'These are the problem informations' },
-                { type: 'message', text: '**Problem definition**: ' + ticket.problemDefinition },
-                { type: 'message', text: '**Problem cause**: ' + ticket.problemCause },
-                { type: 'message', text: '**Possible solutions**: ' + ticket.getPossibilitiesAsString() },
-                { type: 'message', text: '**Favourite solution**: ' + ticket.problemSolution }
-            ]);
-        }
+
+        // Prints ticket informations to the user's chat.
+        await printTicketInformations(stepContext, ticket);
+
         // Sends a reflective message.
         await stepContext.context.sendActivity('During this interaction you have reflected about the problem.');
 
@@ -376,20 +357,8 @@ class TicketDialog extends InterruptDialog {
 async function printBingSearchResult(stepContext, responseAsJSON) {
     // Send the informations as slack full fidelity or adaptive cards using a forEach loop.
     if (stepContext.context.activity.channelId === 'slack') {
-        // Creates a Color array.
+        // Creates a Color index for colors array.
         let colorIndex = 0;
-        const color = [
-            '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
-            '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
-            '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
-            '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
-            '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
-            '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
-            '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
-            '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
-            '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
-            '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'
-        ];
 
         for (const [index, item] of responseAsJSON.webPages.value.entries()) {
             await stepContext.context.sendActivity(
@@ -397,7 +366,7 @@ async function printBingSearchResult(stepContext, responseAsJSON) {
                     channelData: {
                         attachments: [
                             {
-                                title: index + ' . Site name',
+                                title: (index + 1) + ' . Site name',
                                 text: item.name,
                                 color: color[colorIndex]
                             },
@@ -436,10 +405,10 @@ async function printBingSearchResult(stepContext, responseAsJSON) {
 
             await new Promise(resolve => setTimeout(() => resolve(
                 console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-            ), 2000));
+            ), 1000));
         }
     } else {
-        await responseAsJSON.webPages.value.forEach(async (item, index) => {
+        for (const [index, item] of responseAsJSON.webPages.value.entries()) {
             // Create a Template instance from the template payload
             const template = new ACData.Template(searchResultTicketCard);
 
@@ -447,7 +416,7 @@ async function printBingSearchResult(stepContext, responseAsJSON) {
 
             const card = await template.expand({
                 $root: {
-                    title: item.name,
+                    title: (index + 1) + ' . ' + item.name,
                     lastCrawled: date.toString(),
                     language: item.language,
                     linkToTheSite: item.url,
@@ -458,7 +427,56 @@ async function printBingSearchResult(stepContext, responseAsJSON) {
             const cardMessage = { type: ActivityTypes.Message };
             cardMessage.attachments = [CardFactory.adaptiveCard(card)];
             await stepContext.context.sendActivity(cardMessage);
-        });
+        }
+    }
+}
+
+/**
+ * Prints in chat the ticket informations as full fidelity (on Slack) or adaptive cards.
+ * @param {*} stepContext - The context from previous interactions with the user.
+ * @param {Ticket} ticket - The ticket created by the user.
+ */
+async function printTicketInformations(stepContext, ticket) {
+    // Check if the channel used by the user is Slack or not.
+    if (stepContext.context.activity.channelId === 'slack') {
+        await stepContext.context.sendActivity(
+            {
+                channelData: {
+                    text: 'Problem Informations',
+                    attachments: [
+                        {
+                            title: 'Problem definition',
+                            text: ticket.problemDefinition
+                        },
+                        {
+                            title: 'Problem cause',
+                            text: ticket.problemCause
+                        },
+                        {
+                            title: 'Problem Solutions',
+                            text: ticket.getPossibilitiesAsString()
+                        },
+                        {
+                            title: 'Favourite solution',
+                            text: ticket.problemSolution
+                        }
+                    ]
+                }
+            }
+        );
+
+        await new Promise(resolve => setTimeout(() => resolve(
+            console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+        ), 1000));
+    } else {
+        await stepContext.context.sendActivities([
+            // Send ticket informations as messages.
+            { type: 'message', text: 'These are the problem informations' },
+            { type: 'message', text: '**Problem definition**: ' + ticket.problemDefinition },
+            { type: 'message', text: '**Problem cause**: ' + ticket.problemCause },
+            { type: 'message', text: '**Possible solutions**: ' + ticket.getPossibilitiesAsString() },
+            { type: 'message', text: '**Favourite solution**: ' + ticket.problemSolution }
+        ]);
     }
 }
 
