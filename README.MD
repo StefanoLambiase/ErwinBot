@@ -13,7 +13,16 @@ Erwin Bot is meant to work primarily on Slack, but most of its features also wor
 
 - On other channels, use the [Microsoft Adaptive Card](https://docs.microsoft.com/it-it/adaptive-cards/) to show information meaningfully.
 
-## Prerequisites
+## Needed Azure Services
+
+These are the services you need to run the bot with all its features
+
+- [**Web App Bot** and **App Service**](https://azure.microsoft.com/it-it/services/bot-services/)
+- [**LUIS Cognitive service**](https://www.luis.ai/)
+- [**Azure Cosmos DB (Mongo)**](https://azure.microsoft.com/it-it/services/cosmos-db/)
+- [**Bing Resource**](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-web-search/)
+
+## Node Prerequisites
 
 - [Node.js](https://nodejs.org) version 10.14 or higher
     ```bash
@@ -23,7 +32,7 @@ Erwin Bot is meant to work primarily on Slack, but most of its features also wor
 # To run the bot locally
 
 - Clone this repo
-- Create the nedded Azure Resources on the Azure Portal
+- Create the needed Azure Resources on the Azure Portal
 - Saves the resources' credentials in a *.env* file in your project
 - Install modules
 
