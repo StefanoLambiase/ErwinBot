@@ -158,6 +158,9 @@ class TicketDialog extends InterruptDialog {
 
             // Send the informations as adaptive cards using a forEach loop.
             if (stepContext.context.activity.channelId === 'slack') {
+                // Creates a Color array.
+                let colorIndex = 0;
+                const color = ['Blue', 'Green', 'Red', 'Orange', 'Violet', 'Indigo', 'Yellow'];
                 await responseAsJSON.webPages.value.forEach(async (item, index) => {
                     await stepContext.context.sendActivity(
                         {
@@ -165,9 +168,11 @@ class TicketDialog extends InterruptDialog {
                                 attachments: [
                                     {
                                         title: 'Site name',
-                                        text: item.name
+                                        text: item.name,
+                                        color: color[colorIndex]
                                     },
                                     {
+                                        color: color[colorIndex],
                                         fields: [
                                             {
                                                 title: 'Date last crawled',
@@ -183,16 +188,21 @@ class TicketDialog extends InterruptDialog {
                                     },
                                     {
                                         title: 'Link to the site',
-                                        text: item.url
+                                        text: item.url,
+                                        color: color[colorIndex]
                                     },
                                     {
                                         title: 'Site snippet',
-                                        text: item.snippet
+                                        text: item.snippet,
+                                        color: color[colorIndex]
                                     }
                                 ]
                             }
                         }
                     );
+
+                    // Increments color index.
+                    colorIndex = ((colorIndex + 1) === color.length) ? 0 : (colorIndex + 1);
 
                     await new Promise(resolve => setTimeout(() => resolve(
                         console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
