@@ -9,9 +9,9 @@ It offers the manager the opportunity to communicate in an organized manner with
 
 Erwin Bot is meant to work primarily on Slack, but most of its features also work on the other channels in the Azure Bot Framework's default channel list.
 
-- On *Slack*, use the [Full-Fidelity Slack Message](https://docs.microsoft.com/it-it/azure/bot-service/bot-builder-channeldata?view=azure-bot-service-4.0#:~:text=To%20create%20a%20full%2Dfidelity,bot%20to%20the%20Slack%20channel.) feature to create beautiful and clear messages.
+- On *Slack*, it uses the [Full-Fidelity Slack Message](https://docs.microsoft.com/it-it/azure/bot-service/bot-builder-channeldata?view=azure-bot-service-4.0#:~:text=To%20create%20a%20full%2Dfidelity,bot%20to%20the%20Slack%20channel.) feature to create beautiful and clear messages.
 
-- On other channels, use the [Microsoft Adaptive Card](https://docs.microsoft.com/it-it/adaptive-cards/) to show information meaningfully.
+- On other channels, it uses the [Microsoft Adaptive Card](https://docs.microsoft.com/it-it/adaptive-cards/) to show information meaningfully.
 
 ## Authors
 
