@@ -13,6 +13,11 @@ Erwin Bot is meant to work primarily on Slack, but most of its features also wor
 
 - On other channels, use the [Microsoft Adaptive Card](https://docs.microsoft.com/it-it/adaptive-cards/) to show information meaningfully.
 
+## Authors
+
+* **Stefano Lambiase**  - [StefanoLambiase](https://github.com/StefanoLambiase)
+* **Andrea Cupito**     - [ACupito](https://github.com/ACupito)
+
 ## Needed Azure Services
 
 These are the services you need to run the bot with all its features
@@ -76,3 +81,9 @@ To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](htt
 - [Channels and Bot Connector Service](https://docs.microsoft.com/en-us/azure/bot-service/bot-concepts?view=azure-bot-service-4.0)
 - [Restify](https://www.npmjs.com/package/restify)
 - [dotenv](https://www.npmjs.com/package/dotenv)
+
+# Contributors
+
+<a href="https://github.com/stefanolambiase/ErwinBot/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=stefanolambiase/ErwinBot" />
+</a>
