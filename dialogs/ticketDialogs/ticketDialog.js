@@ -390,13 +390,14 @@ async function printBingSearchResult(stepContext, responseAsJSON) {
             '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
             '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'
         ];
-        await responseAsJSON.webPages.value.forEach(async (item, index) => {
+
+        for (const [index, item] of responseAsJSON.webPages.value.entries()) {
             await stepContext.context.sendActivity(
                 {
                     channelData: {
                         attachments: [
                             {
-                                title: 'Site name',
+                                title: index + ' . Site name',
                                 text: item.name,
                                 color: color[colorIndex]
                             },
@@ -436,7 +437,7 @@ async function printBingSearchResult(stepContext, responseAsJSON) {
             await new Promise(resolve => setTimeout(() => resolve(
                 console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
             ), 2000));
-        });
+        }
     } else {
         await responseAsJSON.webPages.value.forEach(async (item, index) => {
             // Create a Template instance from the template payload
