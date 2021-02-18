@@ -138,7 +138,7 @@ class TrelloMainDialog extends InterruptDialog {
         console.log('**TRELLO MAIN DIALOG: waitStep**\n');
 
         return await stepContext.prompt(CHOICE_PROMPT, {
-            prompt: 'Do you want to continue with trello?',
+            prompt: 'Do you want to continue with **Trello Interaction**?',
             retryPrompt: 'Please select one of the following options',
             choices: ['yes', 'no']
         });
@@ -180,23 +180,26 @@ async function printBoards(stepContext, responseAsJSON) {
                 {
                     channelData: {
                         text: 'Card number ' + index,
-                        color: color[colorIndex],
                         attachments: [
                             {
                                 title: 'Board Name',
-                                text: item.name
+                                text: item.name,
+                                color: color[colorIndex]
                             },
                             {
                                 title: 'Description',
-                                text: item.desc
+                                text: item.desc,
+                                color: color[colorIndex]
                             },
                             {
                                 title: 'Last update',
-                                text: moment(item.dateLastActivity).format('MMMM Do YYYY, h:mm:ss a')
+                                text: moment(item.dateLastActivity).format('MMMM Do YYYY, h:mm:ss a'),
+                                color: color[colorIndex]
                             },
                             {
                                 title: 'Link to the board',
-                                text: item.url
+                                text: item.url,
+                                color: color[colorIndex]
                             }
                         ]
                     }

@@ -174,13 +174,6 @@ class TicketDialog extends InterruptDialog {
             await printBingSearchResult(stepContext, responseAsJSON);
         }
 
-        // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
-        if (stepContext.context.activity.channelId === 'slack') {
-            await new Promise(resolve => setTimeout(() => resolve(
-                console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-            ), 5000));
-        }
-
         // Create the list of options to choose from.
         const options = ['Yes', 'No'];
         const message = 'Have you solved your problem?';
@@ -407,6 +400,11 @@ async function printBingSearchResult(stepContext, responseAsJSON) {
                 console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
             ), 1000));
         }
+
+        // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
+        await new Promise(resolve => setTimeout(() => resolve(
+            console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+        ), 1000));
     } else {
         for (const [index, item] of responseAsJSON.webPages.value.entries()) {
             // Create a Template instance from the template payload

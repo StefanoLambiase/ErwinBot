@@ -37,6 +37,12 @@
                     "value": "Jira"
                 },
                 {
+                    "name": "Trello",
+                    "text": "Trello",
+                    "type": "button",
+                    "value": "trello"
+                },
+                {
                     "name": "Info",
                     "text": "Info",
                     "type": "button",

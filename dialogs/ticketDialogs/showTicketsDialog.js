@@ -150,7 +150,7 @@ class ShowTicketsDialog extends InterruptDialog {
                 if (stepContext.context.activity.channelId === 'slack') {
                     await new Promise(resolve => setTimeout(() => resolve(
                         console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-                    ), 5000));
+                    ), 1000));
                 }
             }
 
