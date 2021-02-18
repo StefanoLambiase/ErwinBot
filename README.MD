@@ -1,7 +1,7 @@
 # Erwin bot
 
 <img 
-  src="https://images.everyeye.it/img-notizie/l-attacco-giganti-vediamo-nuova-action-figure-dedicata-erwin-smith-v3-392534-1280x720.jpg" 
+  src="https://raw.githubusercontent.com/StefanoLambiase/ErwinBot/develop/botResources/images/erwinImage.png?token=AH2LWLYOROBX5CRSB3Z4WV3AG5LAY" 
   alt="Oh my... It's Erwin!">
 
 **Erwin bot** is a software management support bot built with node.js, [Azure Bot Framework](https://dev.botframework.com), and other Azure services.
