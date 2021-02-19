@@ -5,10 +5,11 @@
             "type": "TextBlock",
             "size": "Medium",
             "weight": "Bolder",
-            "text": "${index} . Ticket from ${sender}"
+            "text": "**${index} . Ticket from ${sender}**"
         },
         {
             "type": "ColumnSet",
+            "spacing": "Medium",
             "columns": [
                 {
                     "type": "Column",
@@ -16,7 +17,7 @@
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "Sender",
+                            "text": "**Sender**",
                             "wrap": true
                         }
                     ]
@@ -43,7 +44,7 @@
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "Problem",
+                            "text": "**Problem**",
                             "wrap": true
                         }
                     ]
@@ -70,7 +71,7 @@
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "Problem Cause",
+                            "text": "**Problem Cause**",
                             "wrap": true
                         }
                     ]
@@ -97,7 +98,7 @@
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "Possible solutions",
+                            "text": "**Possible solutions**",
                             "wrap": true
                         }
                     ]
@@ -124,7 +125,7 @@
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "Favourite solution",
+                            "text": "**Favourite solution**",
                             "wrap": true
                         }
                     ]

@@ -348,7 +348,7 @@ class TicketDialog extends InterruptDialog {
  * @param {string} responseAsJSON - The bing search result as JSON string.
  */
 async function printBingSearchResult(stepContext, responseAsJSON) {
-    // Send the informations as slack full fidelity or adaptive cards using a forEach loop.
+    // Send the informations as slack full fidelity or adaptive cards using a 'for of' loop.
     if (stepContext.context.activity.channelId === 'slack') {
         // Creates a Color index for colors array.
         let colorIndex = 0;

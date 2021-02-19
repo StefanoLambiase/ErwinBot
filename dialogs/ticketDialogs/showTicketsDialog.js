@@ -3,7 +3,7 @@ const { ActivityTypes, CardFactory } = require('botbuilder');
 
 // Import for Adaptive Card templating.
 const ACData = require('adaptivecards-templating');
-const ticketCard = require('../../botResources/adaptiveCardStructures/ticketCard.json');
+const ticketCard = require('../../botResources/adaptiveCardStructures/ticketCards/ticketCard.json');
 
 // Imports for dialogs.
 const {
@@ -26,6 +26,20 @@ const SHOW_TICKETS_DIALOG = 'SHOW_TICKETS_DIALOG';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 const TEXT_PROMPT = 'TEXT_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
+
+// Global color array.
+const color = [
+    '#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
+    '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+    '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
+    '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+    '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
+    '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+    '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
+    '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+    '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
+    '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'
+];
 
 /**
  * Implements the interaction used to show to a user all the tickets directed to him/her.
@@ -113,45 +127,8 @@ class ShowTicketsDialog extends InterruptDialog {
             } else {
                 await stepContext.context.sendActivity('These are the tickets that I have found.');
 
-                for (const [index, item] of tickets.entries()) {
-                    // Create a Template instance from the template payload
-                    const template = new ACData.Template(ticketCard);
-
-                    let solutionsString = '';
-                    for (const [index2, item2] of item.problemPossibilities.entries()) {
-                        solutionsString = solutionsString + index2 + '. ' + item2 + '\n';
-                    }
-
-                    const card = await template.expand({
-                        $root: {
-                            index: index + 1,
-                            sender: item.user,
-                            problem: item.problemDefinition,
-                            cause: item.problemCause,
-                            solutions: solutionsString,
-                            favouriteSolution: item.problemSolution
-                        }
-                    });
-
-                    const cardMessage = { type: ActivityTypes.Message };
-                    cardMessage.attachments = [CardFactory.adaptiveCard(card)];
-
-                    await stepContext.context.sendActivity(cardMessage);
-
-                    // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
-                    if (stepContext.context.activity.channelId === 'slack') {
-                        await new Promise(resolve => setTimeout(() => resolve(
-                            console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-                        ), 1000));
-                    }
-                }
-
-                // Function used to wait 5 seconds if your channel is slack due to let the channel shows all the bing search results.
-                if (stepContext.context.activity.channelId === 'slack') {
-                    await new Promise(resolve => setTimeout(() => resolve(
-                        console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
-                    ), 1000));
-                }
+                // Prints the tickets found in the DB.
+                await printTicketsFound(stepContext, tickets);
             }
 
             await stepContext.context.sendActivities([
@@ -165,6 +142,95 @@ class ShowTicketsDialog extends InterruptDialog {
 
             // Repeat the dialog from the beginning.
             return await stepContext.replaceDialog(SHOW_TICKETS_DIALOG);
+        }
+    }
+}
+
+/**
+ * Prints in chat the tickets found in the DB based on the email inserted.
+ * @param {*} stepContext - The context from previous interactions with the user.
+ * @param {*} tickets - The tickets found in the DB.
+ */
+async function printTicketsFound(stepContext, tickets) {
+    // Creates a Color index for colors array.
+    let colorIndex = 0;
+
+    // Send the informations as slack full fidelity or adaptive cards using a 'for of' loop.
+    if (stepContext.context.activity.channelId === 'slack') {
+        for (const [index, item] of tickets.entries()) {
+            let solutionsString = '';
+            for (const [index2, item2] of item.problemPossibilities.entries()) {
+                solutionsString = solutionsString + index2 + '. ' + item2 + '\n';
+            }
+
+            // Sends a slack full-fidelity message.
+            await stepContext.context.sendActivity(
+                {
+                    channelData: {
+                        text: '**' + (index + 1) + ' . Ticket from ' + item.user + '**',
+                        attachments: [
+                            {
+                                title: '**Sender**',
+                                text: item.user,
+                                color: color[colorIndex]
+                            },
+                            {
+                                title: '**Problem**',
+                                text: item.problemDefinition,
+                                color: color[colorIndex]
+                            },
+                            {
+                                title: 'Problem Cause',
+                                text: item.problemCause,
+                                color: color[colorIndex]
+                            },
+                            {
+                                title: 'Possible solutions',
+                                text: solutionsString,
+                                color: color[colorIndex]
+                            },
+                            {
+                                title: 'Favourite solution',
+                                text: item.name,
+                                color: color[colorIndex]
+                            }
+                        ]
+                    }
+                }
+            );
+
+            // Increments color index.
+            colorIndex = ((colorIndex + 1) === color.length) ? 0 : (colorIndex + 1);
+
+            await new Promise(resolve => setTimeout(() => resolve(
+                console.log('There are some problem with Slack integration. I need to wait some seconds before continue.')
+            ), 1000));
+        }
+    } else {
+        for (const [index, item] of tickets.entries()) {
+            // Create a Template instance from the template payload
+            const template = new ACData.Template(ticketCard);
+
+            let solutionsString = '';
+            for (const [index2, item2] of item.problemPossibilities.entries()) {
+                solutionsString = solutionsString + index2 + '. ' + item2 + '\n';
+            }
+
+            const card = await template.expand({
+                $root: {
+                    index: index + 1,
+                    sender: item.user,
+                    problem: item.problemDefinition,
+                    cause: item.problemCause,
+                    solutions: solutionsString,
+                    favouriteSolution: item.problemSolution
+                }
+            });
+
+            const cardMessage = { type: ActivityTypes.Message };
+            cardMessage.attachments = [CardFactory.adaptiveCard(card)];
+            // Sends the adaptive card.
+            await stepContext.context.sendActivity(cardMessage);
         }
     }
 }
