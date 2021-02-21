@@ -18,6 +18,22 @@ Erwin Bot is meant to work primarily on Slack, but most of its features also wor
 * **Stefano Lambiase**  - [StefanoLambiase](https://github.com/StefanoLambiase)
 * **Andrea Cupito**     - [ACupito](https://github.com/ACupito)
 
+## Bot Architecture
+
+### Class Diagram
+
+<img 
+  src="https://raw.githubusercontent.com/StefanoLambiase/ErwinBot/master/botResources/images/ErwinBot%20ClassDiagram.png" 
+  alt="ErwinBot Class diagram">
+
+### Service Architecture
+
+<img 
+  src="https://raw.githubusercontent.com/StefanoLambiase/ErwinBot/master/botResources/images/ErwinArchitecture.png" 
+  alt="Erwin Architecture">
+
+# Prerequisites
+
 ## Needed Azure Services
 
 These are the services you need to run the bot with all its features
