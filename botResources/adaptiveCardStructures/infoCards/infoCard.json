@@ -1,0 +1,136 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "TextBlock",
+            "size": "large",
+            "weight": "Bolder",
+            "text": "**Erwin Bot Infos**"
+        },
+        {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "**Authors**",
+            "spacing": "Medium"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "Image",
+                                            "style": "Person",
+                                            "url": "https://raw.githubusercontent.com/StefanoLambiase/ErwinBot/develop/botResources/images/StefanoCVImage.jpg?token=AH2LWL6Q35B5KC7MQ75WEL3AG2EQ6",
+                                            "size": "Small"
+                                        }
+                                    ],
+                                    "width": "auto",
+                                    "verticalContentAlignment": "Center"
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "weight": "Bolder",
+                                            "text": "[Stefano Lambiase](https://github.com/StefanoLambiase)",
+                                            "wrap": true
+                                        }
+                                    ],
+                                    "width": "stretch",
+                                    "verticalContentAlignment": "Center"
+                                }
+                            ]
+                        }
+                    ],
+                    "width": "stretch",
+                    "separator": true,
+                    "verticalContentAlignment": "Center"
+                },
+                {
+                    "type": "Column",
+                    "items": [
+                        {
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "Image",
+                                            "url": "https://raw.githubusercontent.com/StefanoLambiase/ErwinBot/develop/botResources/images/AndreaCVImage.jpg?token=AH2LWL4SWOA7RQ7BRFMIMCDAG2EME",
+                                            "style": "Person",
+                                            "size": "Small"
+                                        }
+                                    ],
+                                    "width": "auto",
+                                    "height": "stretch",
+                                    "minHeight": "2px",
+                                    "verticalContentAlignment": "Center"
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "weight": "Bolder",
+                                            "text": "[Andrea Cupito](https://github.com/ACupito)",
+                                            "wrap": true
+                                        }
+                                    ],
+                                    "width": "stretch",
+                                    "verticalContentAlignment": "Center",
+                                    "minHeight": "2px"
+                                }
+                            ]
+                        }
+                    ],
+                    "width": "stretch",
+                    "separator": true,
+                    "verticalContentAlignment": "Center"
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "**GitHub repository**",
+            "wrap": true,
+            "fontType": "Default",
+            "weight": "Bolder",
+            "spacing": "Medium"
+        },
+        {
+            "type": "TextBlock",
+            "text": "https://github.com/StefanoLambiase/ErwinBot",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "**Contact us on Linkedin**",
+            "wrap": true,
+            "fontType": "Default",
+            "weight": "Bolder",
+            "spacing": "Medium"
+        },
+        {
+            "type": "TextBlock",
+            "text": " - **Andrea Cupito**: https://www.linkedin.com/in/andrea-cupito-52a43b189/",
+            "wrap": true,
+            "fontType": "Default"
+        },
+        {
+            "type": "TextBlock",
+            "text": " - **Stefano Lambiase**: https://www.linkedin.com/in/stefano-lambiase/",
+            "wrap": true,
+            "fontType": "Default"
+        }
+    ]
+}

@@ -9,15 +9,25 @@
         "start": "node ./index.js",
         "watch": "nodemon ./index.js",
         "lint": "eslint .",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "log-remote": "az webapp log tail --name ErwinBot --resource-group ErwinBotResourceGroup"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com"
     },
     "dependencies": {
+        "@slack/web-api": "^6.0.0",
+        "adaptivecards": "^2.7.0",
+        "adaptivecards-templating": "^2.0.0",
+        "app-root-path": "^3.0.0",
         "botbuilder": "~4.11.0",
+        "botbuilder-ai": "^4.11.1",
         "dotenv": "^8.2.0",
+        "jira-connector": "^3.1.0",
+        "moment": "^2.29.1",
+        "mongodb": "^3.6.4",
+        "nodemailer": "^6.4.17",
         "restify": "~8.5.1"
     },
     "devDependencies": {

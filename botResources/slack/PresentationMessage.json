@@ -1,0 +1,54 @@
+{
+    "attachments": [
+        {
+            "title": "by Andrea Cupito & Stefano Lambiase",
+            "author_name": "Erwin Bot",
+            "image_url": "https://raw.githubusercontent.com/StefanoLambiase/ErwinBot/develop/botResources/images/erwinImage.png?token=AJWVTDJ7UPZLZWQ7LTTK7J3AGAKE2"
+        },
+        {
+            "fallback": "What i can do for you!",
+            "title": "What i can do for you!",
+            "callback_id": "comic_1234_xyz",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "actions": [
+                {
+                    "name": "Start daily scrum",
+                    "text": "Start daily scrum",
+                    "type": "button",
+                    "value": "Start daily scrum"
+                },
+                {
+                    "name": "Open a ticket",
+                    "text": "Open a ticket",
+                    "type": "button",
+                    "value": "Open a ticket"
+                },
+                {
+                    "name": "Show tickets",
+                    "text": "Show tickets",
+                    "type": "button",
+                    "value": "Show tickets"
+                },
+                {
+                    "name": "Jira",
+                    "text": "Jira",
+                    "type": "button",
+                    "value": "Jira"
+                },
+                {
+                    "name": "Trello",
+                    "text": "Trello",
+                    "type": "button",
+                    "value": "trello"
+                },
+                {
+                    "name": "Info",
+                    "text": "Info",
+                    "type": "button",
+                    "value": "Info"
+                }
+            ]
+        }
+    ]
+}
