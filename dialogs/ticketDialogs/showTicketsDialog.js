@@ -167,15 +167,15 @@ async function printTicketsFound(stepContext, tickets) {
             await stepContext.context.sendActivity(
                 {
                     channelData: {
-                        text: '**' + (index + 1) + ' . Ticket from ' + item.user + '**',
+                        text: (index + 1) + ' . Ticket from ' + item.user,
                         attachments: [
                             {
-                                title: '**Sender**',
+                                title: 'Sender',
                                 text: item.user,
                                 color: color[colorIndex]
                             },
                             {
-                                title: '**Problem**',
+                                title: 'Problem',
                                 text: item.problemDefinition,
                                 color: color[colorIndex]
                             },
