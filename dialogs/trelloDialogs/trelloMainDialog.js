@@ -138,7 +138,7 @@ class TrelloMainDialog extends InterruptDialog {
         console.log('**TRELLO MAIN DIALOG: waitStep**\n');
 
         return await stepContext.prompt(CHOICE_PROMPT, {
-            prompt: 'Do you want to continue with **Trello Interaction**?',
+            prompt: 'Do you want to continue with **Trello Interaction** ?',
             retryPrompt: 'Please select one of the following options',
             choices: ['yes', 'no']
         });

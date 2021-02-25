@@ -229,7 +229,7 @@ class ScrumDialog extends InterruptDialog {
             await client.chat.postMessage({
                 token: process.env.SlackUserAccessToken,
                 channel: channelSelectedID,
-                text: questionsInfo.getQuestionsAsString()
+                text: questionsInfo.toString()
             });
         } catch (error) {
             console.error(error);
