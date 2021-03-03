@@ -54,7 +54,9 @@ These are the services you need to run the bot with all its features
 
 - Clone this repo
 - Create the needed Azure Resources on the Azure Portal
-- Saves the resources' credentials in a *.env* file in your project
+- Read the *.env_sample* and complete with the required keys ([dotenv documentation](https://www.npmjs.com/package/dotenv))
+- Rename the *.env_sample* into *.env* 
+- Save the resources' credentials in a *.env* file in your project
 - Install modules
 
     ```bash

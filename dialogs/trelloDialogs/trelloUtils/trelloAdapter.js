@@ -5,7 +5,7 @@ const https = require('https');
 // Setup trello keys
 const apiKey = process.env.TrelloAPIKey;
 const oAuthToken = process.env.TrelloOAuthToken;
-const token = process.env.StefanoTrelloToken; // ToDo: modify it with the user's token.
+const token = process.env.UserTrelloToken; // ToDo: modify it with the user's token.
 
 if (!apiKey || !oAuthToken || !token) {
     throw new Error('Trello credentials are not set.');
